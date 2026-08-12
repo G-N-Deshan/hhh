@@ -6,8 +6,6 @@ import {
   FaHome,
   FaCompass,
   FaExclamationTriangle,
-  FaQuestionCircle,
-  FaInfoCircle,
   FaEnvelope,
   FaSignOutAlt,
   FaBars,
@@ -56,7 +54,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Center Navigation Links */}
+          {/* Desktop Center Navigation Links (Home, Opportunities, Report Barrier, Contact) */}
           <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
             <Link
               to="/"
@@ -92,30 +90,6 @@ export default function Navbar() {
             >
               <FaExclamationTriangle className="text-rose-600 text-xs" />
               <span>Report Barrier</span>
-            </Link>
-
-            <Link
-              to="/qa"
-              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
-                isActive("/qa")
-                  ? "bg-indigo-50 text-indigo-700 border border-indigo-200"
-                  : "text-slate-700 hover:text-indigo-600 hover:bg-slate-100"
-              }`}
-            >
-              <FaQuestionCircle className="text-indigo-600 text-xs" />
-              <span>Q&A Board</span>
-            </Link>
-
-            <Link
-              to="/about"
-              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
-                isActive("/about")
-                  ? "bg-blue-50 text-blue-700 border border-blue-200"
-                  : "text-slate-700 hover:text-blue-600 hover:bg-slate-100"
-              }`}
-            >
-              <FaInfoCircle className="text-xs" />
-              <span>About</span>
             </Link>
 
             <Link
@@ -158,6 +132,7 @@ export default function Navbar() {
                 </Link>
 
                 <button
+                  type="button"
                   onClick={handleLogout}
                   className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition-colors cursor-pointer"
                   title="Logout"
@@ -186,8 +161,9 @@ export default function Navbar() {
           {/* Mobile Hamburger Button */}
           <div className="md:hidden flex items-center">
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl bg-slate-100 text-slate-700 hover:text-blue-600 focus:outline-none"
+              className="p-2 rounded-xl bg-slate-100 text-slate-700 hover:text-blue-600 focus:outline-none cursor-pointer"
             >
               {mobileMenuOpen ? <FaTimes className="w-6 h-6" /> : <FaBars className="w-6 h-6" />}
             </button>
@@ -221,20 +197,6 @@ export default function Navbar() {
             Report Barrier
           </Link>
           <Link
-            to="/qa"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-indigo-700 bg-indigo-50/50"
-          >
-            Community Q&A Board
-          </Link>
-          <Link
-            to="/about"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
-          >
-            About
-          </Link>
-          <Link
             to="/contact"
             onClick={() => setMobileMenuOpen(false)}
             className="block px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
@@ -250,7 +212,7 @@ export default function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="block w-full text-center py-2.5 rounded-xl bg-rose-50 text-rose-800 text-xs font-bold"
                 >
-                  My Wishlist ({user.savedOpportunities?.length || 0})
+                  My Wishlist
                 </Link>
 
                 <Link
@@ -262,11 +224,12 @@ export default function Navbar() {
                 </Link>
 
                 <button
+                  type="button"
                   onClick={() => {
                     handleLogout();
                     setMobileMenuOpen(false);
                   }}
-                  className="block w-full text-center py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold"
+                  className="block w-full text-center py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold cursor-pointer"
                 >
                   Sign Out
                 </button>
