@@ -47,7 +47,7 @@ export default function Navbar() {
                   Opportunity<span className="text-amber-600">Bridge</span>
                 </span>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200 uppercase tracking-widest hidden lg:inline-block">
-                  FoT Ruhuna
+                  Community Portal
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-medium tracking-wide hidden sm:block">
