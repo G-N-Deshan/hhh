@@ -102,21 +102,37 @@ export default function OpportunityDetails() {
 
   const handleApplyClick = (e) => {
     e.preventDefault();
-    if (opportunity.applicationUrl && opportunity.applicationUrl.startsWith("http")) {
-      window.open(opportunity.applicationUrl, "_blank", "noopener,noreferrer");
-    } else {
-      setApplyModalOpen(true);
+    if (!user) {
+      toast.error("Please sign in to apply for opportunities");
+      navigate("/login");
+      return;
     }
+    setApplyModalOpen(true);
   };
 
-  const handleApplicationSubmit = (e) => {
+  const handleApplicationSubmit = async (e) => {
     e.preventDefault();
+    if (!applicantName || !applicantEmail) {
+      toast.error("Please fill in required name and email");
+      return;
+    }
+
     setSubmittingApp(true);
-    setTimeout(() => {
+    try {
+      await dataService.applyOpportunity(id, {
+        applicantName,
+        applicantEmail,
+        studentId,
+        statement,
+        opportunityTitle: opportunity.title,
+      });
       setSubmittingApp(false);
       setAppSubmitted(true);
-      toast.success(`Application submitted for ${opportunity.title}!`);
-    }, 600);
+      toast.success(`Application submitted successfully for ${opportunity.title}!`);
+    } catch (err) {
+      setSubmittingApp(false);
+      toast.error("Failed to submit application");
+    }
   };
 
   return (
