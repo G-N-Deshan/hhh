@@ -14,17 +14,18 @@ export default function FloatingQAWidget() {
     <div className="fixed bottom-6 right-6 z-40 animate-bounce hover:animate-none">
       <Link
         to="/qa"
-        className="glass-panel py-3 px-5 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-slate-900 text-white font-extrabold text-xs shadow-2xl border border-blue-400/40 hover:border-blue-300 flex items-center space-x-2.5 transition-all transform hover:scale-105 cursor-pointer font-outfit"
+        className="py-3 px-5 rounded-full bg-gradient-to-r from-amber-500 via-rose-600 to-indigo-950 text-white font-extrabold text-xs shadow-2xl border-2 border-amber-300 shadow-amber-500/30 flex items-center space-x-2.5 transition-all transform hover:scale-105 cursor-pointer font-outfit"
         title="Community Q&A Board - Ask & Answer Questions"
       >
-        <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-amber-300">
-          <FaQuestionCircle className="text-sm" />
+        <div className="w-8 h-8 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold shadow-md">
+          <FaQuestionCircle className="text-base" />
         </div>
         <div className="flex flex-col text-left leading-tight">
-          <span className="text-[10px] text-blue-200 uppercase tracking-widest font-mono">Community</span>
-          <span className="text-xs text-white">Q&A Board</span>
+          <span className="text-[10px] text-amber-200 uppercase tracking-widest font-mono font-bold">Community</span>
+          <span className="text-xs font-black text-white">Q&A Board</span>
         </div>
       </Link>
     </div>
   );
 }
+

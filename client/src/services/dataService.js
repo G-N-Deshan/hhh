@@ -1,74 +1,196 @@
 import api from "./api";
 
-// Initial fallback opportunities for University of Ruhuna FoT
-const INITIAL_OPPORTUNITIES = [
-  {
-    _id: "opp_demo_1",
-    title: "AI & Machine Learning Research Assistantship",
-    description:
-      "Join the Intelligent Systems Research Group at FoT Ruhuna working on NLP for Sri Lankan local languages and computer vision applications in agriculture.",
-    category: "Research",
-    department: "Department of Information & Communication Technology",
-    location: "ICT Advanced Lab & Remote",
-    deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    requirements: ["Python / PyTorch proficiency", "3rd or 4th year FoT student", "Linear algebra background"],
-    contactEmail: "dr.perera@fot.ruh.ac.lk",
-    applicationUrl: "https://fot.ruh.ac.lk/research/ai-grant",
-    tags: ["AI", "Python", "Research", "Deep Learning"],
-    status: "Open",
-    createdBy: { name: "Dr. K. L. Perera", email: "dr.perera@fot.ruh.ac.lk" },
-  },
-  {
-    _id: "opp_demo_2",
-    title: "IoT Smart Agriculture Embedded Systems Internship",
-    description:
-      "Industrial 6-month internship developing microcontroller-based sensor nodes for real-time soil moisture and environmental monitoring.",
-    category: "Internship",
-    department: "Department of Biosystems Technology",
-    location: "Kamburupitiya Tech Campus & Field Sites",
-    deadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
-    requirements: ["C/C++ Arduino & ESP32 programming", "Basic circuit design", "Biosystems or ET background"],
-    contactEmail: "internships@fot.ruh.ac.lk",
-    applicationUrl: "https://fot.ruh.ac.lk/careers/iot-intern",
-    tags: ["IoT", "Embedded", "Biosystems", "Hardware"],
-    status: "Open",
-    createdBy: { name: "Dr. K. L. Perera", email: "dr.perera@fot.ruh.ac.lk" },
-  },
-  {
-    _id: "opp_demo_3",
-    title: "Cloud Architecture & Kubernetes Workshop",
-    description:
-      "A 2-day intensive practical workshop conducted by industry DevOps engineers covering Docker containerization, CI/CD pipelines, and AWS deployment.",
-    category: "Workshop",
-    department: "Department of Information & Communication Technology",
-    location: "Auditorium & Virtual Lab",
-    deadline: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
-    requirements: ["Basic Linux command line knowledge", "Personal laptop with Docker Desktop"],
-    contactEmail: "devops-workshop@fot.ruh.ac.lk",
-    applicationUrl: "https://fot.ruh.ac.lk/workshops/cloud",
-    tags: ["Docker", "Kubernetes", "AWS", "DevOps"],
-    status: "Open",
-    createdBy: { name: "Faculty Admin", email: "admin@ruh.ac.lk" },
-  },
-  {
-    _id: "opp_demo_4",
-    title: "Faculty Undergraduate Technology Innovation Grant",
-    description:
-      "Seed funding of LKR 150,000 for innovative final year prototype projects in Robotics, Renewable Energy, and Smart Sensors.",
-    category: "Scholarship",
-    department: "Department of Engineering Technology",
-    location: "Faculty Innovation Cell",
-    deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
-    requirements: ["Undergraduate FoT student group (2-4 members)", "Project proposal & budget plan"],
-    contactEmail: "grants@fot.ruh.ac.lk",
-    applicationUrl: "https://fot.ruh.ac.lk/grants/apply",
-    tags: ["Grant", "Funding", "Robotics", "Innovation"],
-    status: "Open",
-    createdBy: { name: "Faculty Admin", email: "admin@ruh.ac.lk" },
-  },
-];
+// 100+ Sample Opportunities across 10 Categories (10 items each) for Faculty of Technology, University of Ruhuna
+const generateInitialOpportunities = () => {
+  const dataset = [];
+  let idCounter = 1;
 
-// Initial fallback barriers
+  const categories = [
+    {
+      name: "Scholarships",
+      titles: [
+        "Faculty Dean's Academic Merit Scholarship 2026",
+        "Ceylon Chamber STEM Undergraduate Grant",
+        "Women in ICT Leadership Fellowship",
+        "Mahapola Higher Education Bursary Supplement",
+        "Biosystems Research Innovation Grant 2026",
+        "Dialog Axiata Digital Technology Scholarship",
+        "Alumni Association Hardship Support Grant",
+        "SLT-MOBITEL Cloud Engineering Bursary",
+        "Green Technology Sustainable Energy Scholarship",
+        "Japanese Language & Tech Exchange Fellowship",
+      ],
+    },
+    {
+      name: "Internships",
+      titles: [
+        "Full-Stack Software Engineering Intern - Virtusa",
+        "Embedded IoT & Smart Sensors Intern - Dialog",
+        "Data Science & Python ML Intern - WSO2",
+        "Post-Harvest Quality Control Trainee - FoodTech",
+        "QA Automation Engineering Intern - Sysco LABS",
+        "CAD Modeling & Mechanical Draftsperson - DSI",
+        "Cyber Security SOC Network Defense Intern - SLT",
+        "Plant Tissue Culture Trainee - Agri Dept",
+        "UI/UX & Mobile App Design Intern - Zone24x7",
+        "Robotics & Automation PLC Trainee - Lalan",
+      ],
+    },
+    {
+      name: "Jobs",
+      titles: [
+        "Part-Time IT Lab Technical Assistant - FoT",
+        "Freelance React & Node.js Developer (Part-Time)",
+        "Equipment Maintenance Assistant - ET Department",
+        "Junior WordPress Developer & Site Maintainer",
+        "Soil Testing & Agri Sample Field Collector",
+        "Campus Library Digital Cataloguer",
+        "Graphic Designer & Social Media Creator",
+        "3D Printing & Laser Cutter Operator - FoT Cell",
+        "Weekend Computer Hardware Repair Technician",
+        "Smart Greenhouse Operations Assistant",
+      ],
+    },
+    {
+      name: "Training",
+      titles: [
+        "Kubernetes & Cloud DevOps Intensive Bootcamp",
+        "Ethical Hacking & Web Pen-Testing Masterclass",
+        "Microcontroller PCB Design & Soldering Training",
+        "Deep Learning with PyTorch & Computer Vision",
+        "Food Safety HACCP Certification Course",
+        "React Native Mobile App Workshop",
+        "Industrial Automation & PLC Ladder Logic",
+        "GIS & Satellite Remote Sensing Analysis",
+        "Technical Writing & IEEE Paper Preparation",
+        "Agile Scrum Master & Jira Training",
+      ],
+    },
+    {
+      name: "Financial Support",
+      titles: [
+        "Student Laptop Purchasing Loan Interest Subsidy",
+        "Emergency Medical & Surgical Assistance Fund",
+        "Final Year Prototype Component Fabrication Grant",
+        "Semester Examination Fee Exemption Waiver",
+        "Subsidized Canteen Meal Ticket Voucher Scheme",
+        "Disability Assistive Technology Equipment Subsidy",
+        "Research Conference Paper Registration Grant",
+        "Temporary Hostel Fee Relief Grant",
+        "Software Tool & Cloud Credits Voucher (AWS/JetBrains)",
+        "Student Startup Seed Capital Micro-Grant",
+      ],
+    },
+    {
+      name: "Mental Health",
+      titles: [
+        "Campus Confidential Counseling & Wellness Sessions",
+        "Mindfulness & Exam Stress Relief Workshop",
+        "Peer Mental Health Support Group & Buddy Network",
+        "24/7 Crisis Hotline & Remote Emotional Support",
+        "Sleep Hygiene & Screen Fatigue Clinic",
+        "Art Therapy & Creative Expression Workshop",
+        "Overcoming Imposter Syndrome in Tech Panel",
+        "Yoga & Physical Movement for Posture Relief",
+        "Work-Life Balance & Time Management Masterclass",
+        "Inclusive Group Support for Differently Abled Students",
+      ],
+    },
+    {
+      name: "Accommodation",
+      titles: [
+        "Subsidized On-Campus University Hostel Allocation",
+        "Wheelchair Accessible Ground Floor Boarding House",
+        "Shared Female Tech Student House near Campus",
+        "Quiet Study Boarding for Final Year Thesis Students",
+        "Matara City Shared Flat (Near Railway Station)",
+        "Low-Cost Subsidized Rooms for Mahapola Students",
+        "Male Engineering Tech Student Boarding Annex",
+        "Short-Term Exam Season Guest Accommodation",
+        "Eco-Friendly Boarding with Solar Power",
+        "Emergency Temporary Shelter for Stranded Students",
+      ],
+    },
+    {
+      name: "Transport",
+      titles: [
+        "Campus Shuttle Bus (Matara Station <-> FoT Campus)",
+        "Wheelchair Accessible Van Transport Scheme",
+        "Subsidized Sri Lanka CTB Student Bus Pass",
+        "Campus Bicycle Sharing & Rental Scheme",
+        "Late Night Exam Carpool & Security Escort",
+        "Inter-Campus Express Bus (Wellamadama <-> FoT)",
+        "Student Railway Commuter Discount Concession Card",
+        "Electric Scooter Charging Stations & Parking",
+        "Rainy Season Golf Cart Shuttle Service",
+        "Field Trip & Industrial Visit Bus Grant",
+      ],
+    },
+    {
+      name: "Events",
+      titles: [
+        "Technovate 2026 - Annual Technology Innovation Hackathon",
+        "Robofest Ruhuna 2026 Robotics Championship",
+        "FoT Annual Industrial Career Fair 2026",
+        "International Research Symposium on Technology (IRST)",
+        "Smart Agriculture & Agri-Tech Exhibition 2026",
+        "Cyber Security CTF (Capture The Flag) Contest",
+        "Faculty Cultural Night & Musical Extravaganza",
+        "FoT Inter-Departmental Sports & Esports League",
+        "Open Source Software Day & Linux Install-Fest",
+        "Faculty Alumni Tech Talk & Panel Discussion",
+      ],
+    },
+    {
+      name: "Volunteering",
+      titles: [
+        "Rural School Computer Literacy Volunteer Mentor",
+        "Visually Impaired Audio Book Reader & Converter",
+        "Matara Coastal & Beach Plastic Clean-Up Drive",
+        "Campus Green Eco-Tech Tree Planting Volunteer",
+        "Blood Donation Camp Volunteer Organizer",
+        "Disaster Emergency Relief Coordinator",
+        "Elderly Home Tech Helper & Smartphone Coach",
+        "Animal Welfare & Stray Dog Vaccination Drive",
+        "Youth STEM Workshop Facilitator for School Students",
+        "Campus Access Barrier Survey & ARIA Auditor",
+      ],
+    },
+  ];
+
+  const depts = [
+    "Department of Information & Communication Technology",
+    "Department of Engineering Technology",
+    "Department of Biosystems Technology",
+    "General",
+  ];
+
+  categories.forEach((cat) => {
+    cat.titles.forEach((title, idx) => {
+      dataset.push({
+        _id: `opp_demo_${idCounter++}`,
+        title,
+        description: `Official Opportunity Bridge listing for ${title} under the ${cat.name} section for Faculty of Technology, University of Ruhuna undergraduates.`,
+        category: cat.name,
+        department: depts[idx % depts.length],
+        location: idx % 2 === 0 ? "Kamburupitiya Tech Campus" : "Matara / Remote",
+        deadline: new Date(Date.now() + (15 + idx * 3) * 24 * 60 * 60 * 1000).toISOString(),
+        requirements: ["Registered FoT Student", "Application form submission"],
+        contactEmail: "info@fot.ruh.ac.lk",
+        applicationUrl: "https://fot.ruh.ac.lk/apply",
+        tags: [cat.name, "FoT Ruhuna", "2026"],
+        status: "Open",
+        createdBy: { name: "Faculty Admin", email: "admin@ruh.ac.lk" },
+        createdAt: new Date(Date.now() - idx * 24 * 60 * 60 * 1000).toISOString(),
+      });
+    });
+  });
+
+  return dataset;
+};
+
+const INITIAL_OPPORTUNITIES = generateInitialOpportunities();
+
 const INITIAL_BARRIERS = [
   {
     _id: "bar_demo_1",
@@ -182,13 +304,17 @@ export const dataService = {
   async getOpportunities(params = {}) {
     try {
       const { data } = await api.get("/opportunities", { params });
-      if (Array.isArray(data)) return data;
+      if (Array.isArray(data) && data.length > 0) return data;
     } catch (err) {
       console.warn("API unavailable, returning local storage opportunities:", err.message);
     }
     const list = getStoredOpportunities();
     return list.filter((item) => {
-      if (params.category && params.category !== "All" && item.category !== params.category) return false;
+      if (params.category && params.category !== "All") {
+        const catLower = params.category.toLowerCase();
+        const itemCatLower = (item.category || "").toLowerCase();
+        if (!itemCatLower.includes(catLower) && !catLower.includes(itemCatLower)) return false;
+      }
       if (params.department && params.department !== "All" && item.department !== params.department) return false;
       if (params.search) {
         const query = params.search.toLowerCase();
@@ -255,6 +381,35 @@ export const dataService = {
     const updated = list.filter((o) => o._id !== id);
     localStorage.setItem("local_opportunities", JSON.stringify(updated));
     return true;
+  },
+
+  async applyOpportunity(id, applicationData) {
+    try {
+      const { data } = await api.post(`/opportunities/${id}/apply`, applicationData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API apply opportunity error, saving locally:", err.message);
+    }
+    const localApps = JSON.parse(localStorage.getItem("local_applications") || "[]");
+    const newApp = {
+      _id: "app_local_" + Date.now(),
+      opportunityId: id,
+      ...applicationData,
+      createdAt: new Date().toISOString(),
+      status: "Submitted",
+    };
+    localApps.unshift(newApp);
+    localStorage.setItem("local_applications", JSON.stringify(localApps));
+    return newApp;
+  },
+
+  async toggleSaveOpportunity(id) {
+    try {
+      const { data } = await api.put(`/auth/bookmark/${id}`);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API save opportunity error:", err.message);
+    }
   },
 
   // Barrier Reports API
@@ -461,3 +616,4 @@ export const dataService = {
     };
   },
 };
+
