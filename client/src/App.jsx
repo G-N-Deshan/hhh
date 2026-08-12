@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import FloatingQAWidget from "./components/FloatingQAWidget";
 
 // Public Pages
 import Home from "./pages/Home";
@@ -12,6 +13,7 @@ import Opportunities from "./pages/Opportunities";
 import OpportunityDetails from "./pages/OpportunityDetails";
 import OpportunityForm from "./pages/OpportunityForm";
 import ReportBarrierPage from "./pages/ReportBarrierPage";
+import QA from "./pages/QA";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
@@ -40,7 +42,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
+        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-blue-600 selection:text-white relative">
           <Toaster
             position="top-right"
             toastOptions={{
@@ -67,6 +69,7 @@ export default function App() {
               <Route path="/opportunities/create" element={<OpportunityForm />} />
               <Route path="/opportunities/edit/:id" element={<OpportunityForm />} />
               <Route path="/report-barrier" element={<ReportBarrierPage />} />
+              <Route path="/qa" element={<QA />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
@@ -86,6 +89,9 @@ export default function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
+
+          {/* Floating Right-Side Corner Q&A Board Widget */}
+          <FloatingQAWidget />
 
           <Footer />
         </div>

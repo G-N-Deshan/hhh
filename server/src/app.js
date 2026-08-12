@@ -59,6 +59,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/opportunities", require("./routes/opportunityRoutes"));
 app.use("/api/barriers", require("./routes/barrierRoutes"));
+app.use("/api/qa", require("./routes/qaRoutes"));
 
 // Multi-Candidate Path Resolution for Frontend Production Build (client/dist)
 const candidateDistPaths = [

@@ -59,117 +59,147 @@ const INITIAL_OPPORTUNITIES = [
     department: "Department of Engineering Technology",
     location: "Faculty Innovation Cell",
     deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
-    requirements: ["FoT Undergrad final year project proposal", "Academic supervisor endorsement"],
+    requirements: ["Undergraduate FoT student group (2-4 members)", "Project proposal & budget plan"],
     contactEmail: "grants@fot.ruh.ac.lk",
-    applicationUrl: "https://fot.ruh.ac.lk/grants/innovation-2026",
-    tags: ["Grant", "Innovation", "Robotics", "Funding"],
+    applicationUrl: "https://fot.ruh.ac.lk/grants/apply",
+    tags: ["Grant", "Funding", "Robotics", "Innovation"],
     status: "Open",
     createdBy: { name: "Faculty Admin", email: "admin@ruh.ac.lk" },
   },
 ];
 
-// Initial fallback barrier reports
+// Initial fallback barriers
 const INITIAL_BARRIERS = [
   {
     _id: "bar_demo_1",
-    title: "High Performance GPU Server Shortage for ML Lab",
+    title: "Screen Reader Incompatibility on Exam Registration Portal",
     description:
-      "Students working on Deep Learning final year projects are experiencing severe queuing delays on the single shared NVIDIA GPU server.",
-    category: "Equipment & Hardware",
-    department: "Department of Information & Communication Technology",
+      "Visually impaired undergraduates are unable to register for semester end exams using NVDA screen readers due to missing ARIA labels.",
+    category: "Digital / Web Accessibility",
     urgency: "High",
+    location: "Online Exam Portal (fot.ruh.ac.lk/exams)",
+    department: "Department of Information & Communication Technology",
+    affectedGroup: "Visually Impaired Students",
     status: "In Review",
-    resolutionNotes: "Faculty Board has approved procurement of 2 additional RTX 4090 workstations. Awaiting delivery.",
-    reportedBy: { name: "Kasun Silva", email: "tech.student@fot.ruh.ac.lk" },
+    adminNotes: "Assigned to Faculty IT team for ARIA audit.",
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     _id: "bar_demo_2",
-    title: "Unstable Fibre Optic Connection in Engineering Lab 2",
+    title: "Elevator Power Failure in Technology Building B",
     description:
-      "Intermittent packet loss and speed drops during online simulations and hardware telemetry testing in Lab 2.",
-    category: "Software & Network Access",
-    department: "Department of Engineering Technology",
+      "Mobility impaired students cannot access upper floor computer laboratories due to elevator power faults.",
+    category: "Physical / Infrastructure",
     urgency: "Critical",
+    location: "Building B, 3rd Floor Labs",
+    department: "Department of Engineering Technology",
+    affectedGroup: "Students with Mobility Impairment",
     status: "Pending",
-    resolutionNotes: "",
-    reportedBy: { name: "Kasun Silva", email: "tech.student@fot.ruh.ac.lk" },
+    adminNotes: "Maintenance ticket logged with Campus Electrical Engineer.",
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+];
+
+const INITIAL_QUESTIONS = [
+  {
+    _id: "qa_demo_1",
+    title: "How can I find part-time jobs near Matara?",
+    content: "I am a 2nd year ICT student looking for flexible weekend or evening part-time work near Kamburupitiya or Matara city center to support my studies.",
+    category: "Jobs & Gigs",
+    tags: ["Matara", "Part-Time", "Jobs"],
+    authorName: "Kasun Silva",
+    authorRole: "student",
+    authorDepartment: "Department of Information & Communication Technology",
+    upvotes: 8,
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    answers: [
+      {
+        _id: "ans_1",
+        authorName: "Dr. K. L. Perera",
+        authorRole: "provider",
+        authorDepartment: "Department of Information & Communication Technology",
+        content: "Check the OpportunityBridge jobs board filter for 'Jobs & Gigs'. Local IT firms near Matara software park frequently post weekend freelance roles.",
+        upvotes: 5,
+        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
   },
   {
-    _id: "bar_demo_3",
-    title: "Limited Access to MATLAB & LabVIEW Academic Licenses",
-    description:
-      "Several workstations in the Signal Processing lab lack active LabVIEW license keys preventing lab exercise completion.",
-    category: "Software & Network Access",
-    department: "Department of Engineering Technology",
-    urgency: "Medium",
-    status: "Resolved",
-    resolutionNotes: "Network floating license server reconfigured by IT center.",
-    reportedBy: { name: "Dr. K. L. Perera", email: "dr.perera@fot.ruh.ac.lk" },
+    _id: "qa_demo_2",
+    title: "Which scholarships do not need an income certificate?",
+    content: "Some government scholarships ask for Grama Niladhari income proof. Are there merit-based or faculty research grants open purely on GPA?",
+    category: "Scholarships",
+    tags: ["Scholarship", "Financial Aid", "GPA"],
+    authorName: "Nipuna Deshan",
+    authorRole: "student",
+    authorDepartment: "Department of Engineering Technology",
+    upvotes: 12,
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    answers: [
+      {
+        _id: "ans_2",
+        authorName: "Faculty Admin",
+        authorRole: "admin",
+        authorDepartment: "General",
+        content: "The Faculty Innovation Grant and University Dean's Honor Roll Stipend do not require income certificates. They are awarded based on 1st & 2nd semester GPA.",
+        upvotes: 9,
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  },
+  {
+    _id: "qa_demo_3",
+    title: "Are there weekend-only gigs for students?",
+    content: "Looking for remote or local weekend assignments like web maintenance, graphic design, or lab equipment documentation.",
+    category: "Jobs & Gigs",
+    tags: ["Weekend", "Freelance", "Remote"],
+    authorName: "Sunil Shantha",
+    authorRole: "student",
+    authorDepartment: "Department of Biosystems Technology",
+    upvotes: 6,
+    createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+    answers: [],
   },
 ];
 
 const getStoredOpportunities = () => {
-  const stored = localStorage.getItem("local_opportunities");
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      // fallback
-    }
-  }
-  localStorage.setItem("local_opportunities", JSON.stringify(INITIAL_OPPORTUNITIES));
-  return INITIAL_OPPORTUNITIES;
+  const local = localStorage.getItem("local_opportunities");
+  return local ? JSON.parse(local) : INITIAL_OPPORTUNITIES;
 };
 
 const getStoredBarriers = () => {
-  const stored = localStorage.getItem("local_barriers");
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      // fallback
-    }
-  }
-  localStorage.setItem("local_barriers", JSON.stringify(INITIAL_BARRIERS));
-  return INITIAL_BARRIERS;
+  const local = localStorage.getItem("local_barriers");
+  return local ? JSON.parse(local) : INITIAL_BARRIERS;
+};
+
+const getStoredQuestions = () => {
+  const local = localStorage.getItem("local_questions");
+  return local ? JSON.parse(local) : INITIAL_QUESTIONS;
 };
 
 export const dataService = {
-  // Opportunities
-  async getOpportunities(filters = {}) {
+  // Opportunities API
+  async getOpportunities(params = {}) {
     try {
-      let query = "?";
-      if (filters.keyword) query += `keyword=${encodeURIComponent(filters.keyword)}&`;
-      if (filters.category && filters.category !== "All") query += `category=${encodeURIComponent(filters.category)}&`;
-      if (filters.department && filters.department !== "All") query += `department=${encodeURIComponent(filters.department)}&`;
-
-      const { data } = await api.get(`/opportunities${query}`);
-      if (Array.isArray(data) && data.length > 0) {
-        localStorage.setItem("local_opportunities", JSON.stringify(data));
-        return data;
-      }
+      const { data } = await api.get("/opportunities", { params });
+      if (Array.isArray(data)) return data;
     } catch (err) {
-      console.warn("Backend API unavailable, using local data service fallback:", err.message);
+      console.warn("API unavailable, returning local storage opportunities:", err.message);
     }
-
-    // Local filter fallback
-    let list = getStoredOpportunities();
-    if (filters.keyword) {
-      const kw = filters.keyword.toLowerCase();
-      list = list.filter(
-        (o) =>
-          o.title.toLowerCase().includes(kw) ||
-          o.description.toLowerCase().includes(kw) ||
-          (o.tags && o.tags.some((t) => t.toLowerCase().includes(kw)))
-      );
-    }
-    if (filters.category && filters.category !== "All") {
-      list = list.filter((o) => o.category === filters.category);
-    }
-    if (filters.department && filters.department !== "All") {
-      list = list.filter((o) => o.department === filters.department);
-    }
-    return list;
+    const list = getStoredOpportunities();
+    return list.filter((item) => {
+      if (params.category && params.category !== "All" && item.category !== params.category) return false;
+      if (params.department && params.department !== "All" && item.department !== params.department) return false;
+      if (params.search) {
+        const query = params.search.toLowerCase();
+        return (
+          item.title.toLowerCase().includes(query) ||
+          item.description.toLowerCase().includes(query) ||
+          item.tags?.some((t) => t.toLowerCase().includes(query))
+        );
+      }
+      return true;
+    });
   },
 
   async getOpportunityById(id) {
@@ -177,50 +207,38 @@ export const dataService = {
       const { data } = await api.get(`/opportunities/${id}`);
       if (data) return data;
     } catch (err) {
-      console.warn("Backend API unavailable for ID:", err.message);
+      console.warn("API get by ID failed, trying local storage:", err.message);
     }
     const list = getStoredOpportunities();
-    return list.find((o) => o._id === id) || list[0];
+    return list.find((o) => o._id === id || o.id === id);
   },
 
   async createOpportunity(oppData) {
     try {
       const { data } = await api.post("/opportunities", oppData);
-      if (data) {
-        const list = getStoredOpportunities();
-        localStorage.setItem("local_opportunities", JSON.stringify([data, ...list]));
-        return data;
-      }
+      if (data) return data;
     } catch (err) {
-      console.warn("API save error, persisting to local storage:", err.message);
+      console.warn("API create opportunity error, saving locally:", err.message);
     }
-
-    const newOpp = {
-      _id: `opp_local_${Date.now()}`,
-      ...oppData,
-      status: "Open",
-      createdAt: new Date().toISOString(),
-      createdBy: { name: "Faculty Member", email: oppData.contactEmail },
-    };
     const list = getStoredOpportunities();
-    const updated = [newOpp, ...list];
-    localStorage.setItem("local_opportunities", JSON.stringify(updated));
+    const newOpp = {
+      _id: "opp_local_" + Date.now(),
+      ...oppData,
+      createdAt: new Date().toISOString(),
+      status: "Open",
+    };
+    list.unshift(newOpp);
+    localStorage.setItem("local_opportunities", JSON.stringify(list));
     return newOpp;
   },
 
   async updateOpportunity(id, updateData) {
     try {
       const { data } = await api.put(`/opportunities/${id}`, updateData);
-      if (data) {
-        const list = getStoredOpportunities();
-        const updated = list.map((o) => (o._id === id ? data : o));
-        localStorage.setItem("local_opportunities", JSON.stringify(updated));
-        return data;
-      }
+      if (data) return data;
     } catch (err) {
-      console.warn("API update failed, updating local state:", err.message);
+      console.warn("API update opportunity error:", err.message);
     }
-
     const list = getStoredOpportunities();
     const updated = list.map((o) => (o._id === id ? { ...o, ...updateData } : o));
     localStorage.setItem("local_opportunities", JSON.stringify(updated));
@@ -231,7 +249,7 @@ export const dataService = {
     try {
       await api.delete(`/opportunities/${id}`);
     } catch (err) {
-      console.warn("API delete failed, removing locally:", err.message);
+      console.warn("API delete opportunity error:", err.message);
     }
     const list = getStoredOpportunities();
     const updated = list.filter((o) => o._id !== id);
@@ -239,71 +257,56 @@ export const dataService = {
     return true;
   },
 
-  // Barriers
-  async getBarriers(filters = {}) {
+  // Barrier Reports API
+  async getBarriers(params = {}) {
     try {
-      let query = "?";
-      if (filters.status && filters.status !== "All") query += `status=${encodeURIComponent(filters.status)}&`;
-      if (filters.category && filters.category !== "All") query += `category=${encodeURIComponent(filters.category)}&`;
-
-      const { data } = await api.get(`/barriers${query}`);
-      if (Array.isArray(data) && data.length > 0) {
-        localStorage.setItem("local_barriers", JSON.stringify(data));
-        return data;
-      }
+      const { data } = await api.get("/barriers", { params });
+      if (Array.isArray(data)) return data;
     } catch (err) {
-      console.warn("Backend API unavailable, using local barrier fallback:", err.message);
+      console.warn("API unavailable, returning local storage barriers:", err.message);
     }
-
-    let list = getStoredBarriers();
-    if (filters.status && filters.status !== "All") {
-      list = list.filter((b) => b.status === filters.status);
-    }
-    if (filters.category && filters.category !== "All") {
-      list = list.filter((b) => b.category === filters.category);
-    }
-    return list;
+    const list = getStoredBarriers();
+    return list.filter((item) => {
+      if (params.status && params.status !== "All" && item.status !== params.status) return false;
+      if (params.category && params.category !== "All" && item.category !== params.category) return false;
+      if (params.search) {
+        const query = params.search.toLowerCase();
+        return (
+          item.title.toLowerCase().includes(query) ||
+          item.description.toLowerCase().includes(query) ||
+          item.location.toLowerCase().includes(query)
+        );
+      }
+      return true;
+    });
   },
 
   async createBarrier(barrierData) {
     try {
       const { data } = await api.post("/barriers", barrierData);
-      if (data) {
-        const list = getStoredBarriers();
-        localStorage.setItem("local_barriers", JSON.stringify([data, ...list]));
-        return data;
-      }
+      if (data) return data;
     } catch (err) {
-      console.warn("API barrier error, saving locally:", err.message);
+      console.warn("API create barrier error, saving locally:", err.message);
     }
-
+    const list = getStoredBarriers();
     const newBar = {
-      _id: `bar_local_${Date.now()}`,
+      _id: "bar_local_" + Date.now(),
       ...barrierData,
       status: "Pending",
-      resolutionNotes: "",
       createdAt: new Date().toISOString(),
-      reportedBy: { name: "Student", email: "student@fot.ruh.ac.lk" },
     };
-    const list = getStoredBarriers();
-    const updated = [newBar, ...list];
-    localStorage.setItem("local_barriers", JSON.stringify(updated));
+    list.unshift(newBar);
+    localStorage.setItem("local_barriers", JSON.stringify(list));
     return newBar;
   },
 
   async updateBarrierStatus(id, updateData) {
     try {
       const { data } = await api.put(`/barriers/${id}`, updateData);
-      if (data) {
-        const list = getStoredBarriers();
-        const updated = list.map((b) => (b._id === id ? data : b));
-        localStorage.setItem("local_barriers", JSON.stringify(updated));
-        return data;
-      }
+      if (data) return data;
     } catch (err) {
-      console.warn("API status update error, saving locally:", err.message);
+      console.warn("API update barrier status error:", err.message);
     }
-
     const list = getStoredBarriers();
     const updated = list.map((b) => (b._id === id ? { ...b, ...updateData } : b));
     localStorage.setItem("local_barriers", JSON.stringify(updated));
@@ -319,6 +322,99 @@ export const dataService = {
     const list = getStoredBarriers();
     const updated = list.filter((b) => b._id !== id);
     localStorage.setItem("local_barriers", JSON.stringify(updated));
+    return true;
+  },
+
+  // Community Q&A Board API
+  async getQuestions(params = {}) {
+    try {
+      const { data } = await api.get("/qa", { params });
+      if (Array.isArray(data)) return data;
+    } catch (err) {
+      console.warn("API unavailable, returning local questions:", err.message);
+    }
+    const list = getStoredQuestions();
+    return list.filter((q) => {
+      if (params.category && params.category !== "All" && q.category !== params.category) return false;
+      if (params.search) {
+        const query = params.search.toLowerCase();
+        return (
+          q.title.toLowerCase().includes(query) ||
+          q.content.toLowerCase().includes(query) ||
+          q.tags?.some((t) => t.toLowerCase().includes(query))
+        );
+      }
+      return true;
+    });
+  },
+
+  async createQuestion(questionData) {
+    try {
+      const { data } = await api.post("/qa", questionData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API create question error, saving locally:", err.message);
+    }
+    const list = getStoredQuestions();
+    const newQ = {
+      _id: "qa_local_" + Date.now(),
+      ...questionData,
+      upvotes: 0,
+      answers: [],
+      createdAt: new Date().toISOString(),
+    };
+    list.unshift(newQ);
+    localStorage.setItem("local_questions", JSON.stringify(list));
+    return newQ;
+  },
+
+  async answerQuestion(id, answerData) {
+    try {
+      const { data } = await api.post(`/qa/${id}/answer`, answerData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API answer question error:", err.message);
+    }
+    const list = getStoredQuestions();
+    const updated = list.map((q) => {
+      if (q._id === id) {
+        const answers = q.answers || [];
+        answers.push({
+          _id: "ans_local_" + Date.now(),
+          ...answerData,
+          upvotes: 0,
+          createdAt: new Date().toISOString(),
+        });
+        return { ...q, answers };
+      }
+      return q;
+    });
+    localStorage.setItem("local_questions", JSON.stringify(updated));
+    return updated.find((q) => q._id === id);
+  },
+
+  async upvoteQuestion(id) {
+    try {
+      const { data } = await api.put(`/qa/${id}/upvote`);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API upvote error:", err.message);
+    }
+    const list = getStoredQuestions();
+    const updated = list.map((q) => (q._id === id ? { ...q, upvotes: (q.upvotes || 0) + 1 } : q));
+    localStorage.setItem("local_questions", JSON.stringify(updated));
+    return updated.find((q) => q._id === id);
+  },
+
+  async deleteQuestion(id) {
+    try {
+      await api.delete(`/qa/${id}`);
+    } catch (err) {
+      console.warn("API delete question error:", err.message);
+    }
+    const list = getStoredQuestions();
+    const updated = list.filter((q) => q._id !== id);
+    localStorage.setItem("local_questions", JSON.stringify(updated));
     return true;
   },
 
