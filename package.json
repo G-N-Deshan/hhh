@@ -1,0 +1,31 @@
+{
+  "name": "opportunity-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpportunityBridge - Platform for Faculty of Technology, University of Ruhuna to discover community opportunities and report access barriers.",
+  "main": "server/src/server.js",
+  "scripts": {
+    "install-server": "npm install --prefix server",
+    "install-client": "npm install --prefix client",
+    "install-all": "npm install && npm run install-server && npm run install-client",
+    "build": "npm run build --prefix client",
+    "build-client": "npm run build --prefix client",
+    "start": "node server/src/server.js",
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "test-server": "npm test --prefix server"
+  },
+  "keywords": [
+    "mern",
+    "university-of-ruhuna",
+    "faculty-of-technology",
+    "opportunity-bridge",
+    "azure-webapp"
+  ],
+  "author": "Faculty of Technology, University of Ruhuna",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
