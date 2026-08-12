@@ -151,8 +151,8 @@ const deleteQuestion = async (req, res) => {
       return res.status(404).json({ message: "Question not found" });
     }
 
-    if (req.user.role !== "admin") {
-      return res.status(403).json({ message: "Only administrators can delete community questions" });
+    if (question.author.toString() !== req.user._id.toString() && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized to delete this question" });
     }
 
     await question.deleteOne();
@@ -170,3 +170,4 @@ module.exports = {
   upvoteQuestion,
   deleteQuestion,
 };
+

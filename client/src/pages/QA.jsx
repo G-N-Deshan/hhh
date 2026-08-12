@@ -139,10 +139,6 @@ export default function QA() {
   };
 
   const handleDeleteQuestion = async (questionId) => {
-    if (!user || (user.role !== "admin" && user.role !== "Admin")) {
-      toast.error("Only administrators are allowed to delete questions");
-      return;
-    }
     if (!window.confirm("Are you sure you want to delete this question?")) return;
     const success = await dataService.deleteQuestion(questionId);
     if (success) {
@@ -154,8 +150,6 @@ export default function QA() {
   const toggleExpandQuestion = (id) => {
     setExpandedQuestionId(expandedQuestionId === id ? null : id);
   };
-
-  const isAdminUser = user && (user.role === "admin" || user.role === "Admin");
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
@@ -294,7 +288,7 @@ export default function QA() {
                     </h2>
                   </div>
 
-                  {/* Upvote & Delete Actions (DELETE STRICTLY ADMIN ONLY) */}
+                  {/* Upvote & Delete Actions */}
                   <div className="flex items-center space-x-2">
                     <button
                       type="button"
@@ -305,12 +299,12 @@ export default function QA() {
                       <span>{q.upvotes || 0}</span>
                     </button>
 
-                    {isAdminUser && (
+                    {(user?.role === "admin" || user?.role === "Admin" || user?._id === q.author?._id || user?._id === q.author) && (
                       <button
                         type="button"
                         onClick={() => handleDeleteQuestion(q._id)}
                         className="p-2 rounded-xl text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer"
-                        title="Delete Question (Admin Only)"
+                        title="Delete Question"
                       >
                         <FaTrash className="text-xs" />
                       </button>

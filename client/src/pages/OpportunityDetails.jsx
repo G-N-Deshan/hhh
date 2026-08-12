@@ -475,7 +475,7 @@ export default function OpportunityDetails() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase text-slate-700 mb-1">ID</label>
+                    <label className="block text-xs font-bold uppercase text-slate-700 mb-1">Student ID / Reg No</label>
                     <input
                       type="text"
                       placeholder="TG/2022/1004"
@@ -522,3 +522,4 @@ export default function OpportunityDetails() {
     </div>
   );
 }
+
