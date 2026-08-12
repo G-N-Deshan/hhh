@@ -18,7 +18,8 @@ const getOpportunities = async (req, res) => {
     }
 
     if (category && category !== "All") {
-      query.category = category;
+      const cleanCat = category.replace("& Gigs", "").replace(" & Gigs", "").trim();
+      query.category = { $regex: new RegExp(cleanCat, "i") };
     }
 
     if (department && department !== "All") {

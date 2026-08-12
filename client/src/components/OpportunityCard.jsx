@@ -1,14 +1,21 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaMapMarkerAlt, FaBookmark, FaRegBookmark, FaExclamationTriangle, FaExternalLinkAlt, FaClock } from "react-icons/fa";
+import { FaCalendarAlt, FaMapMarkerAlt, FaBookmark, FaRegBookmark, FaClock } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import { dataService } from "../services/dataService";
 import toast from "react-hot-toast";
 
 export default function OpportunityCard({ opportunity, onSaveToggle }) {
   const { user } = useAuth();
-  const [saved, setSaved] = useState(
-    user?.savedOpportunities?.some((o) => (o._id || o) === opportunity._id) || false
-  );
+  
+  const targetId = opportunity._id || opportunity.id;
+  const localSavedIds = JSON.parse(localStorage.getItem("local_wishlist") || "[]");
+  const userSavedIds = (user?.savedOpportunities || []).map((o) => (o._id || o).toString());
+  
+  const isInitiallySaved =
+    userSavedIds.includes(targetId?.toString()) || localSavedIds.includes(targetId?.toString());
+
+  const [saved, setSaved] = useState(isInitiallySaved);
 
   const getCategoryBadgeClass = (category) => {
     switch (category) {
@@ -38,14 +45,22 @@ export default function OpportunityCard({ opportunity, onSaveToggle }) {
   const isClosingSoon = daysLeft > 0 && daysLeft <= 7;
   const isExpired = daysLeft < 0;
 
-  const handleSaveClick = (e) => {
+  const handleSaveClick = async (e) => {
     e.preventDefault();
     if (!user) {
-      toast.error("Please login to save opportunities");
+      toast.error("Please login to save opportunities to wishlist");
       return;
     }
-    setSaved(!saved);
-    if (onSaveToggle) onSaveToggle(opportunity._id);
+    const newSavedState = !saved;
+    setSaved(newSavedState);
+
+    await dataService.toggleSaveOpportunity(targetId);
+
+    if (onSaveToggle) {
+      onSaveToggle(targetId);
+    } else {
+      toast.success(newSavedState ? "Saved to wishlist!" : "Removed from wishlist");
+    }
   };
 
   return (
@@ -76,12 +91,12 @@ export default function OpportunityCard({ opportunity, onSaveToggle }) {
 
             <button
               onClick={handleSaveClick}
-              className={`p-1.5 rounded-lg transition-colors ${
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                 saved ? "text-amber-600 bg-amber-50 border border-amber-200" : "text-slate-400 hover:text-slate-700"
               }`}
-              title={saved ? "Saved" : "Save Opportunity"}
+              title={saved ? "Saved in Wishlist" : "Save Opportunity"}
             >
-              {saved ? <FaBookmark className="w-4 h-4" /> : <FaRegBookmark className="w-4 h-4" />}
+              {saved ? <FaBookmark className="w-4 h-4 text-amber-500" /> : <FaRegBookmark className="w-4 h-4" />}
             </button>
           </div>
         </div>
@@ -99,33 +114,26 @@ export default function OpportunityCard({ opportunity, onSaveToggle }) {
           </span>
           <span className="flex items-center space-x-1">
             <FaCalendarAlt className="text-blue-500" />
-            <span>{deadlineDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+            <span>Deadline: {deadlineDate.toLocaleDateString()}</span>
           </span>
         </div>
 
-        {/* Short Description */}
-        <p className="text-slate-600 text-xs leading-relaxed line-clamp-3 mb-4">
+        {/* Department Badge */}
+        <p className="text-xs text-slate-600 mb-3 line-clamp-2">
           {opportunity.description}
         </p>
       </div>
 
-      {/* Footer Action Buttons */}
-      <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-        <Link
-          to={`/report-barrier?opportunityId=${opportunity._id}`}
-          className="text-xs text-slate-500 hover:text-rose-600 transition-colors flex items-center space-x-1"
-          title="Report a barrier accessing this opportunity"
-        >
-          <FaExclamationTriangle className="text-rose-500 text-[10px]" />
-          <span>Report Barrier</span>
-        </Link>
-
+      {/* Footer Info */}
+      <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+        <span className="text-slate-500 font-medium">
+          {opportunity.department}
+        </span>
         <Link
           to={`/opportunities/${opportunity._id}`}
-          className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-sm flex items-center space-x-1 font-outfit"
+          className="font-bold text-blue-600 hover:text-blue-800 font-outfit"
         >
-          <span>View Details</span>
-          <FaExternalLinkAlt className="text-[10px]" />
+          View Details →
         </Link>
       </div>
     </div>
