@@ -11,6 +11,9 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [department, setDepartment] = useState("Department of Information & Communication Technology");
+  const [role, setRole] = useState("student");
+  const [location, setLocation] = useState("Matara");
   const [loading, setLoading] = useState(false);
 
   const googleBtnContainerRef = useRef(null);
@@ -71,7 +74,7 @@ export default function Register() {
         name: payload.name || payload.email.split("@")[0],
         googleId: payload.sub,
         picture: payload.picture,
-        department: "Department of Information & Communication Technology",
+        department: department || "Department of Information & Communication Technology",
       });
       setLoading(false);
 
@@ -90,9 +93,9 @@ export default function Register() {
       name,
       email,
       password,
-      department: "Department of Information & Communication Technology",
-      role: "student",
-      location: "Matara",
+      department,
+      role,
+      location,
     });
     setLoading(false);
     if (res.success) {
@@ -101,8 +104,8 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4">
-      <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-200 bg-white shadow-xl space-y-6">
+    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4">
+      <div className="glass-panel w-full max-w-lg p-8 rounded-3xl border border-slate-200 bg-white shadow-xl space-y-6">
         
         {/* Header */}
         <div className="text-center space-y-2">
@@ -115,9 +118,9 @@ export default function Register() {
           <p className="text-xs text-slate-500">Join OpportunityBridge • University of Ruhuna</p>
         </div>
 
-        {/* Official Google Identity Button */}
+        {/* Single Official Google Identity Services Button */}
         <div className="flex justify-center w-full min-h-[44px]">
-          <div ref={googleBtnContainerRef} className="w-full flex justify-center"></div>
+          <div ref={googleBtnContainerRef}></div>
         </div>
 
         {/* Divider */}
@@ -126,7 +129,7 @@ export default function Register() {
           <span className="bg-white px-3 text-[11px] font-mono text-slate-400 uppercase tracking-wider absolute">or</span>
         </div>
 
-        {/* Clean Simplified Form */}
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
@@ -179,6 +182,38 @@ export default function Register() {
             </div>
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                Department
+              </label>
+              <select
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                className="w-full bg-white text-slate-900 px-3 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:outline-none text-xs"
+              >
+                <option value="Department of Information & Communication Technology">Dept of ICT</option>
+                <option value="Department of Engineering Technology">Dept of ET</option>
+                <option value="Department of Biosystems Technology">Dept of BST</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                Account Type
+              </label>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="w-full bg-white text-slate-900 px-3 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:outline-none text-xs"
+              >
+                <option value="student">Student</option>
+                <option value="provider">Opportunity Provider</option>
+              </select>
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -200,3 +235,4 @@ export default function Register() {
     </div>
   );
 }
+
