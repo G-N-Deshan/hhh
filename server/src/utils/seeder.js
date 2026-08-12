@@ -2,15 +2,17 @@ const User = require("../models/User");
 const Opportunity = require("../models/Opportunity");
 const BarrierReport = require("../models/BarrierReport");
 const Question = require("../models/Question");
+const generateCategoryData = require("./sampleData");
 
 const seedDatabase = async () => {
   try {
-    const userCount = await User.countDocuments();
-    if (userCount === 0) {
-      console.log("Seeding initial Faculty of Technology data...");
+    let admin = await User.findOne({ role: "admin" });
+    let lecturer = await User.findOne({ role: "provider" });
+    let student = await User.findOne({ role: "student" });
 
-      // Create Default Users
-      const admin = await User.create({
+    // Seed default users if empty
+    if (!admin) {
+      admin = await User.create({
         name: "Faculty Admin",
         email: "admin@ruh.ac.lk",
         password: "Admin@123",
@@ -18,8 +20,10 @@ const seedDatabase = async () => {
         department: "General",
         bio: "Dean & IT System Administrator - Faculty of Technology, University of Ruhuna",
       });
+    }
 
-      const lecturer = await User.create({
+    if (!lecturer) {
+      lecturer = await User.create({
         name: "Dr. K. L. Perera",
         email: "dr.perera@fot.ruh.ac.lk",
         password: "Lecturer@123",
@@ -27,8 +31,10 @@ const seedDatabase = async () => {
         department: "Department of Information & Communication Technology",
         bio: "Senior Lecturer in Cyber Security and Software Engineering",
       });
+    }
 
-      const student = await User.create({
+    if (!student) {
+      student = await User.create({
         name: "Kasun Silva",
         email: "tech.student@fot.ruh.ac.lk",
         password: "Student@123",
@@ -36,87 +42,63 @@ const seedDatabase = async () => {
         department: "Department of Engineering Technology",
         bio: "3rd Year Undergraduate in Engineering Technology (Robotics)",
       });
+    }
 
-      // Create Default Opportunities
-      const opportunities = [
-        {
-          title: "AI & Machine Learning Research Assistantship",
-          description:
-            "Join the Intelligent Systems Research Group at FoT Ruhuna working on NLP for Sri Lankan local languages and computer vision applications in agriculture.",
-          category: "Research",
-          department: "Department of Information & Communication Technology",
-          location: "ICT Advanced Lab & Remote",
-          deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // +30 days
-          requirements: [
-            "Python / PyTorch proficiency",
-            "3rd or 4th year FoT student",
-            "Strong background in linear algebra",
-          ],
-          contactEmail: "dr.perera@fot.ruh.ac.lk",
-          applicationUrl: "https://fot.ruh.ac.lk/research/ai-grant",
-          tags: ["AI", "Python", "Research", "Deep Learning"],
-          postedBy: lecturer._id,
-          postedByName: lecturer.name,
-        },
-        {
-          title: "Full-Stack Web Engineering Internship 2026",
-          description:
-            "6-month paid industrial internship for ICT & ET undergraduates with leading Colombo tech firms.",
-          category: "Internships",
-          department: "Department of Information & Communication Technology",
-          location: "Colombo / Hybrid",
-          deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-          requirements: ["React, Node.js, MongoDB", "Good communication skills"],
-          contactEmail: "careers@fot.ruh.ac.lk",
-          applicationUrl: "https://fot.ruh.ac.lk/careers/internship2026",
-          tags: ["MERN", "React", "Node.js", "Paid Internship"],
-          postedBy: lecturer._id,
-          postedByName: lecturer.name,
-        },
-      ];
+    // Seed 100+ Opportunities across all 10 Categories if count < 10
+    const oppCount = await Opportunity.countDocuments();
+    if (oppCount < 10) {
+      console.log("Seeding 100+ Opportunities across all 10 categories (10 items each)...");
+      const sampleItems = generateCategoryData();
+      
+      const formattedItems = sampleItems.map((item) => ({
+        ...item,
+        postedBy: lecturer._id,
+        postedByName: lecturer.name,
+      }));
 
-      await Opportunity.insertMany(opportunities);
+      await Opportunity.insertMany(formattedItems);
+      console.log("Successfully seeded 100+ opportunities into MongoDB Atlas.");
+    }
 
-      // Create Default Barrier Reports
+    // Seed default barrier reports if empty
+    const barrierCount = await BarrierReport.countDocuments();
+    if (barrierCount === 0) {
       const barriers = [
         {
           title: "Screen Reader Incompatibility on Exam Registration Portal",
           description:
             "Visually impaired undergraduates are unable to register for semester end exams using NVDA screen readers due to missing ARIA labels.",
-          barrierType: "Digital / Web Accessibility",
+          category: "Digital / Web Accessibility",
+          urgency: "High",
           location: "Online Exam Portal (fot.ruh.ac.lk/exams)",
           department: "Department of Information & Communication Technology",
-          affectedGroup: "Visually Impaired Undergraduates",
-          status: "Investigating",
+          affectedGroup: "Visually Impaired Students",
+          status: "In Review",
+          adminNotes: "Assigned to Faculty IT team for ARIA audit.",
           reportedBy: student._id,
           reporterName: student.name,
-          adminNotes: "Assigned to Faculty IT team for ARIA audit.",
         },
       ];
-
       await BarrierReport.insertMany(barriers);
     }
 
-    // Seed Initial Q&A Questions if empty
+    // Seed Q&A questions if empty
     const questionCount = await Question.countDocuments();
     if (questionCount === 0) {
-      const defaultUser = await User.findOne({ email: "tech.student@fot.ruh.ac.lk" }) || await User.findOne();
-      const defaultLecturer = await User.findOne({ role: "provider" }) || defaultUser;
-
       const defaultQuestions = [
         {
           title: "How can I find part-time jobs near Matara?",
           content: "I am a 2nd year ICT student looking for flexible weekend or evening part-time work near Kamburupitiya or Matara city center to support my studies.",
           category: "Jobs & Gigs",
           tags: ["Matara", "Part-Time", "Jobs"],
-          author: defaultUser._id,
+          author: student._id,
           authorName: "Kasun Silva",
           authorRole: "student",
           authorDepartment: "Department of Information & Communication Technology",
           upvotes: 8,
           answers: [
             {
-              author: defaultLecturer._id,
+              author: lecturer._id,
               authorName: "Dr. K. L. Perera",
               authorRole: "provider",
               authorDepartment: "Department of Information & Communication Technology",
@@ -130,14 +112,14 @@ const seedDatabase = async () => {
           content: "Some government scholarships ask for Grama Niladhari income proof. Are there merit-based or faculty research grants open purely on GPA?",
           category: "Scholarships",
           tags: ["Scholarship", "Financial Aid", "GPA"],
-          author: defaultUser._id,
+          author: student._id,
           authorName: "Nipuna Deshan",
           authorRole: "student",
           authorDepartment: "Department of Engineering Technology",
           upvotes: 12,
           answers: [
             {
-              author: defaultLecturer._id,
+              author: admin._id,
               authorName: "Faculty Admin",
               authorRole: "admin",
               authorDepartment: "General",
@@ -151,7 +133,7 @@ const seedDatabase = async () => {
           content: "Looking for remote or local weekend assignments like web maintenance, graphic design, or lab equipment documentation.",
           category: "Jobs & Gigs",
           tags: ["Weekend", "Freelance", "Remote"],
-          author: defaultUser._id,
+          author: student._id,
           authorName: "Sunil Shantha",
           authorRole: "student",
           authorDepartment: "Department of Biosystems Technology",
@@ -159,9 +141,7 @@ const seedDatabase = async () => {
           answers: [],
         },
       ];
-
       await Question.insertMany(defaultQuestions);
-      console.log("Community Q&A Board seeded with initial questions.");
     }
   } catch (error) {
     console.error("Error seeding initial data:", error.message);
