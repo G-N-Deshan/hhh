@@ -17,7 +17,7 @@ const seedDatabase = async () => {
         email: "admin@ruh.ac.lk",
         password: "Admin@123",
         role: "admin",
-        department: "General",
+        department: "All Departments",
         bio: "Dean & IT System Administrator - Faculty of Technology, University of Ruhuna",
       });
     }
@@ -44,21 +44,40 @@ const seedDatabase = async () => {
       });
     }
 
-    // Seed 100+ Opportunities across all 10 Categories if count < 10
-    const oppCount = await Opportunity.countDocuments();
-    if (oppCount < 10) {
-      console.log("Seeding 100+ Opportunities across all 10 categories (10 items each)...");
-      const sampleItems = generateCategoryData();
-      
-      const formattedItems = sampleItems.map((item) => ({
-        ...item,
-        postedBy: lecturer._id,
-        postedByName: lecturer.name,
-      }));
+    // Ensure at least 10 sample items for EACH of the 10 Categories
+    const sampleItems = generateCategoryData();
+    const categoriesList = [
+      "Scholarships",
+      "Internships",
+      "Jobs",
+      "Training",
+      "Financial Support",
+      "Mental Health",
+      "Accommodation",
+      "Transport",
+      "Events",
+      "Volunteering",
+    ];
 
-      await Opportunity.insertMany(formattedItems);
-      console.log("Successfully seeded 100+ opportunities into MongoDB Atlas.");
+    for (const catName of categoriesList) {
+      const count = await Opportunity.countDocuments({ category: catName });
+      if (count < 10) {
+        console.log(`Seeding sample items for category: ${catName} (current count: ${count})...`);
+        const catSampleItems = sampleItems.filter((item) => item.category === catName);
+        
+        const itemsToInsert = catSampleItems.map((item) => ({
+          ...item,
+          createdBy: lecturer._id,
+          postedBy: lecturer._id,
+          postedByName: lecturer.name,
+        }));
+
+        await Opportunity.insertMany(itemsToInsert);
+        console.log(`Added ${itemsToInsert.length} items to category: ${catName}`);
+      }
     }
+
+    console.log("Database category verification complete. All 10 categories have 10+ items.");
 
     // Seed default barrier reports if empty
     const barrierCount = await BarrierReport.countDocuments();
@@ -122,7 +141,7 @@ const seedDatabase = async () => {
               author: admin._id,
               authorName: "Faculty Admin",
               authorRole: "admin",
-              authorDepartment: "General",
+              authorDepartment: "All Departments",
               content: "The Faculty Innovation Grant and University Dean's Honor Roll Stipend do not require income certificates. They are awarded based on 1st & 2nd semester GPA.",
               upvotes: 9,
             },
@@ -149,3 +168,4 @@ const seedDatabase = async () => {
 };
 
 module.exports = seedDatabase;
+

@@ -162,7 +162,7 @@ const generateInitialOpportunities = () => {
     "Department of Information & Communication Technology",
     "Department of Engineering Technology",
     "Department of Biosystems Technology",
-    "General",
+    "All Departments",
   ];
 
   categories.forEach((cat) => {
@@ -206,20 +206,6 @@ const INITIAL_BARRIERS = [
     adminNotes: "Assigned to Faculty IT team for ARIA audit.",
     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
   },
-  {
-    _id: "bar_demo_2",
-    title: "Elevator Power Failure in Technology Building B",
-    description:
-      "Mobility impaired students cannot access upper floor computer laboratories due to elevator power faults.",
-    category: "Physical / Infrastructure",
-    urgency: "Critical",
-    location: "Building B, 3rd Floor Labs",
-    department: "Department of Engineering Technology",
-    affectedGroup: "Students with Mobility Impairment",
-    status: "Pending",
-    adminNotes: "Maintenance ticket logged with Campus Electrical Engineer.",
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-  },
 ];
 
 const INITIAL_QUESTIONS = [
@@ -234,59 +220,14 @@ const INITIAL_QUESTIONS = [
     authorDepartment: "Department of Information & Communication Technology",
     upvotes: 8,
     createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    answers: [
-      {
-        _id: "ans_1",
-        authorName: "Dr. K. L. Perera",
-        authorRole: "provider",
-        authorDepartment: "Department of Information & Communication Technology",
-        content: "Check the OpportunityBridge jobs board filter for 'Jobs & Gigs'. Local IT firms near Matara software park frequently post weekend freelance roles.",
-        upvotes: 5,
-        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-      },
-    ],
-  },
-  {
-    _id: "qa_demo_2",
-    title: "Which scholarships do not need an income certificate?",
-    content: "Some government scholarships ask for Grama Niladhari income proof. Are there merit-based or faculty research grants open purely on GPA?",
-    category: "Scholarships",
-    tags: ["Scholarship", "Financial Aid", "GPA"],
-    authorName: "Nipuna Deshan",
-    authorRole: "student",
-    authorDepartment: "Department of Engineering Technology",
-    upvotes: 12,
-    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    answers: [
-      {
-        _id: "ans_2",
-        authorName: "Faculty Admin",
-        authorRole: "admin",
-        authorDepartment: "General",
-        content: "The Faculty Innovation Grant and University Dean's Honor Roll Stipend do not require income certificates. They are awarded based on 1st & 2nd semester GPA.",
-        upvotes: 9,
-        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-    ],
-  },
-  {
-    _id: "qa_demo_3",
-    title: "Are there weekend-only gigs for students?",
-    content: "Looking for remote or local weekend assignments like web maintenance, graphic design, or lab equipment documentation.",
-    category: "Jobs & Gigs",
-    tags: ["Weekend", "Freelance", "Remote"],
-    authorName: "Sunil Shantha",
-    authorRole: "student",
-    authorDepartment: "Department of Biosystems Technology",
-    upvotes: 6,
-    createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     answers: [],
   },
 ];
 
 const getStoredOpportunities = () => {
   const local = localStorage.getItem("local_opportunities");
-  return local ? JSON.parse(local) : INITIAL_OPPORTUNITIES;
+  const parsed = local ? JSON.parse(local) : [];
+  return parsed.length >= 20 ? parsed : INITIAL_OPPORTUNITIES;
 };
 
 const getStoredBarriers = () => {
@@ -302,22 +243,29 @@ const getStoredQuestions = () => {
 export const dataService = {
   // Opportunities API
   async getOpportunities(params = {}) {
+    let list = [];
     try {
       const { data } = await api.get("/opportunities", { params });
-      if (Array.isArray(data) && data.length > 0) return data;
+      if (Array.isArray(data) && data.length > 0) {
+        list = data;
+      }
     } catch (err) {
-      console.warn("API unavailable, returning local storage opportunities:", err.message);
+      console.warn("API unavailable, returning local sample opportunities:", err.message);
     }
-    const list = getStoredOpportunities();
+
+    if (list.length === 0) {
+      list = getStoredOpportunities();
+    }
+
     return list.filter((item) => {
       if (params.category && params.category !== "All") {
-        const catLower = params.category.toLowerCase();
-        const itemCatLower = (item.category || "").toLowerCase();
-        if (!itemCatLower.includes(catLower) && !catLower.includes(itemCatLower)) return false;
+        const catClean = params.category.toLowerCase().replace("& gigs", "").replace("gigs", "").trim();
+        const itemCatClean = (item.category || "").toLowerCase();
+        if (!itemCatClean.includes(catClean) && !catClean.includes(itemCatClean)) return false;
       }
       if (params.department && params.department !== "All" && item.department !== params.department) return false;
-      if (params.search) {
-        const query = params.search.toLowerCase();
+      if (params.search || params.keyword) {
+        const query = (params.search || params.keyword).toLowerCase();
         return (
           item.title.toLowerCase().includes(query) ||
           item.description.toLowerCase().includes(query) ||
@@ -404,12 +352,22 @@ export const dataService = {
   },
 
   async toggleSaveOpportunity(id) {
+    let savedList = JSON.parse(localStorage.getItem("local_wishlist") || "[]");
+    const targetIdStr = (id || "").toString();
+    if (savedList.includes(targetIdStr)) {
+      savedList = savedList.filter((item) => item !== targetIdStr);
+    } else {
+      savedList.push(targetIdStr);
+    }
+    localStorage.setItem("local_wishlist", JSON.stringify(savedList));
+
     try {
       const { data } = await api.put(`/auth/bookmark/${id}`);
       if (data) return data;
     } catch (err) {
       console.warn("API save opportunity error:", err.message);
     }
+    return { savedOpportunities: savedList };
   },
 
   // Barrier Reports API
@@ -615,4 +573,89 @@ export const dataService = {
       oppDepartmentStats: Object.keys(deptMap).map((k) => ({ _id: k, count: deptMap[k] })),
     };
   },
+
+  // Opportunity Review System
+  async addOpportunityReview(id, reviewData) {
+    try {
+      const { data } = await api.post(`/opportunities/${id}/reviews`, reviewData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API add opportunity review error, saving locally:", err.message);
+    }
+    const list = getStoredOpportunities();
+    const target = list.find((o) => o._id === id || o.id === id);
+    if (target) {
+      target.reviews = target.reviews || [];
+      const newRev = {
+        _id: "rev_local_" + Date.now(),
+        ...reviewData,
+        createdAt: new Date().toISOString(),
+      };
+      target.reviews.push(newRev);
+      target.numReviews = target.reviews.length;
+      target.averageRating =
+        target.reviews.reduce((acc, item) => item.rating + acc, 0) / target.reviews.length;
+
+      localStorage.setItem("local_opportunities", JSON.stringify(list));
+      return { message: "Review added", opportunity: target };
+    }
+  },
+
+  // Site Platform Review System
+  async getSiteReviews() {
+    try {
+      const { data } = await api.get("/site-reviews");
+      if (data) return data;
+    } catch (err) {
+      console.warn("API get site reviews error, returning local dataset:", err.message);
+    }
+    const local = JSON.parse(localStorage.getItem("local_site_reviews") || "[]");
+    if (local.length === 0) {
+      const initialSiteReviews = [
+        {
+          _id: "srev_1",
+          userName: "Kasun Silva",
+          userRole: "student",
+          userDepartment: "Department of Engineering Technology",
+          rating: 5,
+          title: "Incredible Faculty Resource Platform!",
+          comment: "OpportunityBridge helped me secure an embedded systems internship at Dialog Axiata. Highly recommended for all FoT undergraduates!",
+          createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          _id: "srev_2",
+          userName: "Nipuna Deshan",
+          userRole: "student",
+          userDepartment: "Department of Information & Communication Technology",
+          rating: 5,
+          title: "Great Barrier Reporting & Accessibility",
+          comment: "Reporting physical & website accessibility issues is super fast. The Dean's office responded to my exam portal barrier report within 2 days.",
+          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+      ];
+      return { reviews: initialSiteReviews, total: 2, averageRating: 5.0 };
+    }
+    const total = local.length;
+    const avg = total > 0 ? local.reduce((a, b) => a + b.rating, 0) / total : 5.0;
+    return { reviews: local, total, averageRating: parseFloat(avg.toFixed(1)) };
+  },
+
+  async createSiteReview(reviewData) {
+    try {
+      const { data } = await api.post("/site-reviews", reviewData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API create site review error, saving locally:", err.message);
+    }
+    const local = JSON.parse(localStorage.getItem("local_site_reviews") || "[]");
+    const newRev = {
+      _id: "srev_local_" + Date.now(),
+      ...reviewData,
+      createdAt: new Date().toISOString(),
+    };
+    local.unshift(newRev);
+    localStorage.setItem("local_site_reviews", JSON.stringify(local));
+    return newRev;
+  },
 };
+

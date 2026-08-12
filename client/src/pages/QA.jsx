@@ -10,12 +10,12 @@ import {
   FaThumbsUp,
   FaCommentDots,
   FaUser,
-  FaGraduationCap,
   FaTag,
   FaTrash,
   FaCheckCircle,
   FaChevronDown,
   FaChevronUp,
+  FaTimes,
 } from "react-icons/fa";
 
 export default function QA() {
@@ -161,7 +161,7 @@ export default function QA() {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-semibold">
               <FaQuestionCircle className="w-3.5 h-3.5" />
-              <span>Option 3 • Community Q&A Board</span>
+              <span>Community Q&A Board</span>
             </div>
             <h1 className="text-3xl font-bold font-outfit tracking-tight">
               Community Q&A Board
@@ -172,6 +172,7 @@ export default function QA() {
           </div>
 
           <button
+            type="button"
             onClick={() => {
               if (!user) {
                 toast.error("Please sign in to ask a question");
@@ -179,7 +180,7 @@ export default function QA() {
               }
               setModalOpen(true);
             }}
-            className="self-start md:self-center py-3.5 px-6 rounded-2xl bg-blue-500 hover:bg-blue-400 text-white font-bold text-sm shadow-lg shadow-blue-500/30 transition-all font-outfit flex items-center space-x-2 cursor-pointer group shrink-0"
+            className="self-start md:self-center py-3.5 px-6 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm shadow-lg shadow-amber-500/20 transition-all font-outfit flex items-center space-x-2 cursor-pointer group shrink-0"
           >
             <FaPlus className="group-hover:rotate-90 transition-transform" />
             <span>Ask a Question</span>
@@ -208,6 +209,7 @@ export default function QA() {
             {categories.map((cat) => (
               <button
                 key={cat}
+                type="button"
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all font-outfit cursor-pointer ${
                   selectedCategory === cat
@@ -236,8 +238,15 @@ export default function QA() {
             Be the first to ask a question about scholarships, jobs, or campus access!
           </p>
           <button
-            onClick={() => setModalOpen(true)}
-            className="py-2.5 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl font-outfit inline-flex items-center space-x-2"
+            type="button"
+            onClick={() => {
+              if (!user) {
+                toast.error("Please sign in to ask a question");
+                return;
+              }
+              setModalOpen(true);
+            }}
+            className="py-2.5 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl font-outfit inline-flex items-center space-x-2 cursor-pointer"
           >
             <FaPlus />
             <span>Ask First Question</span>
@@ -271,7 +280,10 @@ export default function QA() {
                       </span>
                     </div>
 
-                    <h2 className="text-lg font-bold text-slate-900 font-outfit hover:text-blue-600 transition-colors cursor-pointer" onClick={() => toggleExpandQuestion(q._id)}>
+                    <h2
+                      className="text-lg font-bold text-slate-900 font-outfit hover:text-blue-600 transition-colors cursor-pointer"
+                      onClick={() => toggleExpandQuestion(q._id)}
+                    >
                       {q.title}
                     </h2>
                   </div>
@@ -279,6 +291,7 @@ export default function QA() {
                   {/* Upvote & Delete Actions */}
                   <div className="flex items-center space-x-2">
                     <button
+                      type="button"
                       onClick={() => handleUpvoteQuestion(q._id)}
                       className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer"
                     >
@@ -286,10 +299,11 @@ export default function QA() {
                       <span>{q.upvotes || 0}</span>
                     </button>
 
-                    {(user?.role === "admin" || user?._id === q.author?._id || user?._id === q.author) && (
+                    {(user?.role === "admin" || user?.role === "Admin" || user?._id === q.author?._id || user?._id === q.author) && (
                       <button
+                        type="button"
                         onClick={() => handleDeleteQuestion(q._id)}
-                        className="p-2 rounded-xl text-rose-500 hover:bg-rose-50 transition-colors"
+                        className="p-2 rounded-xl text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer"
                         title="Delete Question"
                       >
                         <FaTrash className="text-xs" />
@@ -316,6 +330,7 @@ export default function QA() {
                   </div>
 
                   <button
+                    type="button"
                     onClick={() => toggleExpandQuestion(q._id)}
                     className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center space-x-1.5 cursor-pointer"
                   >
@@ -404,7 +419,11 @@ export default function QA() {
                 <FaQuestionCircle className="text-blue-600 text-lg" />
                 <h3 className="text-lg font-bold text-slate-900 font-outfit">Ask Community Question</h3>
               </div>
-              <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-slate-700">
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="text-slate-400 hover:text-slate-700 p-1 cursor-pointer"
+              >
                 <FaTimes />
               </button>
             </div>
@@ -472,7 +491,7 @@ export default function QA() {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold font-outfit"
+                  className="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold font-outfit cursor-pointer"
                 >
                   Cancel
                 </button>

@@ -1,5 +1,33 @@
 const mongoose = require("mongoose");
 
+const reviewSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    userName: {
+      type: String,
+      required: true,
+    },
+    userDepartment: {
+      type: String,
+      default: "General",
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
+    },
+    comment: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
+
 const opportunitySchema = new mongoose.Schema(
   {
     title: {
@@ -105,6 +133,15 @@ const opportunitySchema = new mongoose.Schema(
       type: String,
       enum: ["Open", "Closed"],
       default: "Open",
+    },
+    reviews: [reviewSchema],
+    averageRating: {
+      type: Number,
+      default: 5.0,
+    },
+    numReviews: {
+      type: Number,
+      default: 0,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
