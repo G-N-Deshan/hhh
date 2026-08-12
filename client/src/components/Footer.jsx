@@ -19,7 +19,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Connecting community opportunities with the people who need them most. Faculty of Technology, University of Ruhuna.
+              Connecting community opportunities with the people who need them most. Empowering individuals by bridging access to growth and support.
             </p>
           </div>
 
@@ -69,7 +69,7 @@ export default function Footer() {
                 <Link to="/opportunities?category=Mental+Health" className="hover:text-blue-600 transition-colors">Mental Health Support</Link>
               </li>
               <li>
-                <Link to="/opportunities?category=Events" className="hover:text-blue-600 transition-colors">Faculty Events</Link>
+                <Link to="/opportunities?category=Events" className="hover:text-blue-600 transition-colors">Community Events</Link>
               </li>
             </ul>
           </div>
@@ -77,20 +77,20 @@ export default function Footer() {
           {/* Column 4: Contact */}
           <div>
             <h4 className="text-slate-900 font-bold text-xs uppercase tracking-wider mb-4 font-outfit">
-              Faculty Contact
+              Contact Us
             </h4>
             <ul className="space-y-2.5 text-xs">
               <li className="flex items-start space-x-2">
                 <FaMapMarkerAlt className="text-amber-600 flex-shrink-0 mt-0.5" />
-                <span>Karagoda Uyangoda, Kamburupitiya, Matara</span>
+                <span>123 Community Hub Street, Colombo, Sri Lanka</span>
               </li>
               <li className="flex items-center space-x-2">
                 <FaEnvelope className="text-rose-600 flex-shrink-0" />
-                <span>support@fot.ruh.ac.lk</span>
+                <span>support@opportunitybridge.org</span>
               </li>
               <li className="flex items-center space-x-2">
                 <FaPhone className="text-emerald-600 flex-shrink-0" />
-                <span>+94 (0)41 2292200</span>
+                <span>+94 (0)11 2345678</span>
               </li>
             </ul>
           </div>
@@ -99,7 +99,7 @@ export default function Footer() {
 
         <div className="mt-12 pt-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500">
           <p>© 2026 OpportunityBridge. All rights reserved.</p>
-          <p className="mt-2 sm:mt-0 font-mono text-[11px]">Faculty of Technology • University of Ruhuna</p>
+          <p className="mt-2 sm:mt-0 font-mono text-[11px]">Connecting Opportunities • Overcoming Access Barriers</p>
         </div>
       </div>
     </footer>

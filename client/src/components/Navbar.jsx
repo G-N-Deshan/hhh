@@ -6,6 +6,7 @@ import {
   FaHome,
   FaCompass,
   FaExclamationTriangle,
+  FaQuestionCircle,
   FaInfoCircle,
   FaEnvelope,
   FaShieldAlt,
@@ -14,6 +15,7 @@ import {
   FaUserPlus,
   FaBars,
   FaTimes,
+  FaUser,
 } from "react-icons/fa";
 
 export default function Navbar() {
@@ -34,7 +36,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* Logo / Project Name */}
+          {/* Logo / Generic Project Name */}
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-rose-700 via-rose-600 to-amber-500 p-0.5 shadow-md group-hover:scale-105 transition-transform">
               <div className="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
@@ -45,9 +47,6 @@ export default function Navbar() {
               <div className="flex items-center space-x-2">
                 <span className="font-extrabold text-xl tracking-tight text-slate-900 font-outfit">
                   Opportunity<span className="text-amber-600">Bridge</span>
-                </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200 uppercase tracking-widest hidden lg:inline-block">
-                  FoT Ruhuna
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-medium tracking-wide hidden sm:block">
@@ -95,6 +94,18 @@ export default function Navbar() {
             </Link>
 
             <Link
+              to="/qa"
+              className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
+                isActive("/qa")
+                  ? "bg-indigo-50 text-indigo-700 border border-indigo-200"
+                  : "text-slate-700 hover:text-indigo-600 hover:bg-slate-100"
+              }`}
+            >
+              <FaQuestionCircle className="text-indigo-600 text-xs" />
+              <span>Q&A Board</span>
+            </Link>
+
+            <Link
               to="/about"
               className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
                 isActive("/about")
@@ -117,174 +128,151 @@ export default function Navbar() {
               <FaEnvelope className="text-xs" />
               <span>Contact</span>
             </Link>
-
-            {/* Admin Dedicated Navigation Item */}
-            {isAdmin && (
-              <Link
-                to="/admin"
-                className={`px-3 py-2 rounded-lg text-sm font-bold transition-colors flex items-center space-x-1.5 ${
-                  location.pathname.startsWith("/admin")
-                    ? "bg-rose-100 text-rose-800 border border-rose-300"
-                    : "text-rose-700 hover:bg-rose-50"
-                }`}
-              >
-                <FaShieldAlt className="text-xs text-rose-600" />
-                <span>Admin Portal</span>
-              </Link>
-            )}
           </nav>
 
-          {/* Right Auth / Profile Menu */}
+          {/* Desktop Right User Authentication Actions */}
           <div className="hidden md:flex items-center space-x-3">
             {user ? (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <Link
-                  to={isAdmin ? "/admin/dashboard" : "/dashboard"}
-                  className="flex items-center space-x-2.5 bg-slate-100 p-1.5 pl-3 pr-3 rounded-full border border-slate-200 hover:border-blue-300 transition-colors"
+                  to={isAdmin ? "/admin/dashboard" : "/user/dashboard"}
+                  className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all border border-slate-200"
                 >
-                  <div className="text-right">
-                    <p className="text-xs font-bold text-slate-800 leading-tight">{user.name}</p>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded font-mono font-semibold uppercase bg-amber-100 text-amber-800 border border-amber-300">
-                      {user.role}
+                  <FaUser className="text-blue-600" />
+                  <span>{user.name.split(" ")[0]}</span>
+                  {isAdmin && (
+                    <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-extrabold uppercase">
+                      Admin
                     </span>
-                  </div>
-
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-rose-600 flex items-center justify-center font-bold text-white text-xs shadow-sm">
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
+                  )}
                 </Link>
 
                 <button
                   onClick={handleLogout}
+                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition-colors"
                   title="Logout"
-                  className="p-2.5 rounded-full text-slate-500 hover:text-rose-600 hover:bg-slate-100 transition-colors"
                 >
-                  <FaSignOutAlt className="w-4 h-4" />
+                  <FaSignOutAlt className="text-sm" />
                 </button>
               </div>
             ) : (
               <div className="flex items-center space-x-2">
                 <Link
                   to="/login"
-                  className="px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors flex items-center space-x-1.5"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-blue-600 hover:bg-slate-100 transition-all font-outfit"
                 >
-                  <FaSignInAlt className="text-amber-600" />
-                  <span>Login</span>
+                  Sign In
                 </Link>
-
                 <Link
                   to="/register"
-                  className="px-3.5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-all shadow-sm flex items-center space-x-1.5 font-outfit"
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition-all font-outfit"
                 >
-                  <FaUserPlus />
-                  <span>Register</span>
+                  Register
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile Menu Toggle Button */}
+          {/* Mobile Hamburger Button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200"
+              className="p-2 rounded-xl bg-slate-100 text-slate-700 hover:text-blue-600 focus:outline-none"
             >
               {mobileMenuOpen ? <FaTimes className="w-6 h-6" /> : <FaBars className="w-6 h-6" />}
             </button>
           </div>
+
         </div>
-
-        {/* Mobile Dropdown Drawer */}
-        {mobileMenuOpen && (
-          <div className="md:hidden py-4 px-2 space-y-2 border-t border-slate-200 bg-white rounded-b-2xl shadow-xl">
-            <Link
-              to="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-100"
-            >
-              Home
-            </Link>
-            <Link
-              to="/opportunities"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-100"
-            >
-              Opportunities
-            </Link>
-            <Link
-              to="/report-barrier"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-base font-medium text-rose-600 hover:bg-slate-100"
-            >
-              Report Barrier
-            </Link>
-            <Link
-              to="/about"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-100"
-            >
-              About
-            </Link>
-            <Link
-              to="/contact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-100"
-            >
-              Contact
-            </Link>
-
-            {isAdmin && (
-              <Link
-                to="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-base font-bold text-rose-700 bg-rose-50 border border-rose-200"
-              >
-                Admin Security Portal (/admin)
-              </Link>
-            )}
-
-            <div className="pt-4 border-t border-slate-200">
-              {user ? (
-                <div className="space-y-2">
-                  <Link
-                    to={isAdmin ? "/admin/dashboard" : "/dashboard"}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-2 rounded-lg bg-blue-50 text-blue-700 font-semibold text-sm"
-                  >
-                    Dashboard ({user.name})
-                  </Link>
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2 rounded-lg bg-rose-50 text-rose-700 font-semibold text-sm border border-rose-200"
-                  >
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-2 pt-1">
-                  <Link
-                    to="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-center py-2 bg-slate-100 text-slate-800 rounded-lg font-semibold text-sm"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/register"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-center py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm"
-                  >
-                    Register
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Mobile Hamburger Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-2 shadow-lg">
+          <Link
+            to="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+          >
+            Home
+          </Link>
+          <Link
+            to="/opportunities"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+          >
+            Opportunities
+          </Link>
+          <Link
+            to="/report-barrier"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-rose-700 bg-rose-50/50"
+          >
+            Report Barrier
+          </Link>
+          <Link
+            to="/qa"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-indigo-700 bg-indigo-50/50"
+          >
+            Community Q&A Board
+          </Link>
+          <Link
+            to="/about"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+          >
+            About
+          </Link>
+          <Link
+            to="/contact"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+          >
+            Contact
+          </Link>
+
+          <div className="pt-4 border-t border-slate-200 space-y-2">
+            {user ? (
+              <>
+                <Link
+                  to={isAdmin ? "/admin/dashboard" : "/user/dashboard"}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block w-full text-center py-2.5 rounded-xl bg-slate-100 text-slate-900 text-xs font-bold"
+                >
+                  My Dashboard ({user.name})
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="block w-full text-center py-2.5 rounded-xl bg-rose-50 text-rose-700 text-xs font-bold"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-center py-2.5 rounded-xl border border-slate-300 text-slate-800 text-xs font-bold"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-center py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold"
+                >
+                  Register
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

@@ -68,7 +68,7 @@ export default function Home() {
         <div className="relative z-10 max-w-3xl space-y-6">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-semibold uppercase tracking-wider">
             <FaGraduationCap className="text-amber-600 w-4 h-4" />
-            <span>Faculty of Technology • University of Ruhuna</span>
+            <span>National Opportunity Portal • Sri Lanka</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-black text-slate-900 font-outfit tracking-tight leading-tight">
@@ -76,7 +76,7 @@ export default function Home() {
           </h1>
 
           <p className="text-lg text-slate-600 leading-relaxed">
-            Many opportunities already exist around you. OpportunityBridge helps you discover scholarships, internships, training programs, and report the barriers that stop people from accessing them.
+            Many opportunities already exist around you. oppotunity brige helps you discover scholarships, internships, training programs, and report the barriers that stop people from accessing them.
           </p>
 
           {/* Hero Search Bar */}
@@ -172,7 +172,7 @@ export default function Home() {
       {/* SECTION 4: HOW IT WORKS */}
       <section className="glass-panel rounded-3xl p-8 sm:p-12 border border-slate-200 bg-white space-y-8">
         <div className="text-center max-w-xl mx-auto space-y-2">
-          <h2 className="text-3xl font-bold text-slate-900 font-outfit">How OpportunityBridge Works</h2>
+          <h2 className="text-3xl font-bold text-slate-900 font-outfit">How oppotunity brige Works</h2>
           <p className="text-sm text-slate-500">Simple steps to connect opportunities with people</p>
         </div>
 
@@ -296,7 +296,7 @@ export default function Home() {
       <section className="space-y-6">
         <div className="text-center max-w-xl mx-auto space-y-2">
           <h2 className="text-3xl font-bold text-slate-900 font-outfit">Community Success Stories</h2>
-          <p className="text-sm text-slate-500">See how OpportunityBridge has helped students</p>
+          <p className="text-sm text-slate-500">See how oppotunity brige has helped students</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -325,7 +325,7 @@ export default function Home() {
           <div className="glass-card p-6 rounded-2xl border border-slate-200 space-y-3">
             <FaQuoteLeft className="text-emerald-500 text-2xl" />
             <p className="text-xs text-slate-600 leading-relaxed italic">
-              "Posting industrial IoT internship positions on OpportunityBridge helped us connect directly with qualified technology students."
+              "Posting industrial IoT internship positions on oppotunity brige helped us connect directly with qualified technology students."
             </p>
             <div className="pt-2 border-t border-slate-100">
               <p className="text-xs font-bold text-slate-900">Dr. K. L. Perera</p>

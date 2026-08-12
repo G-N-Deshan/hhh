@@ -10,6 +10,7 @@ const {
   getUsers,
   updateUserRole,
   toggleUserStatus,
+  deleteUser,
 } = require("../controllers/authController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
@@ -24,5 +25,6 @@ router.put("/bookmark/:opportunityId", protect, toggleSaveOpportunity);
 router.get("/users", protect, adminOnly, getUsers);
 router.put("/users/:id/role", protect, adminOnly, updateUserRole);
 router.put("/users/:id/status", protect, adminOnly, toggleUserStatus);
+router.delete("/users/:id", protect, adminOnly, deleteUser);
 
 module.exports = router;

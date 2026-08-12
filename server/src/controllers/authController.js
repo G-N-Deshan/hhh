@@ -117,7 +117,10 @@ const googleAuth = async (req, res) => {
       return res.status(401).json({ message: "Google account email could not be verified" });
     }
 
-    let user = await User.findOne({ $or: [{ googleId }, { email }] }).populate("savedOpportunities");
+    const normalizedEmail = email.toLowerCase().trim();
+    let user = await User
+      .findOne({ $or: [{ googleId }, { email: normalizedEmail }] })
+      .populate("savedOpportunities");
 
     if (user) {
       if (user.isBlocked) {
@@ -131,8 +134,8 @@ const googleAuth = async (req, res) => {
       // Auto-create new user account with Google credentials
       const randomPassword = Math.random().toString(36).slice(-10) + "G!1";
       user = await User.create({
-        name: name || email.split("@")[0],
-        email: email,
+        name: name || normalizedEmail.split("@")[0],
+        email: normalizedEmail,
         googleId,
         password: randomPassword,
         role: "student",
@@ -283,6 +286,25 @@ const toggleUserStatus = async (req, res) => {
   }
 };
 
+// @desc    Delete user (Admin)
+// @route   DELETE /api/auth/users/:id
+// @access  Private (Admin)
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user._id.toString() === req.user._id.toString()) {
+      return res.status(400).json({ message: "You cannot delete your own admin account while logged in." });
+    }
+
+    await user.deleteOne();
+    res.json({ message: "User removed successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -293,4 +315,5 @@ module.exports = {
   getUsers,
   updateUserRole,
   toggleUserStatus,
+  deleteUser,
 };

@@ -3,9 +3,6 @@ const mongoose = require("mongoose");
 const DEFAULT_ATLAS_SRV =
   "mongodb+srv://ndsf999_db_user:bq8uTXpYuuuLfAhe@cluster0.vptojr2.mongodb.net/opportunity_bridge?retryWrites=true&w=majority&appName=Cluster0";
 
-const DEFAULT_ATLAS_DIRECT =
-  "mongodb://ndsf999_db_user:bq8uTXpYuuuLfAhe@cluster0-shard-00-00.vptojr2.mongodb.net:27017,cluster0-shard-00-01.vptojr2.mongodb.net:27017,cluster0-shard-00-02.vptojr2.mongodb.net:27017/opportunity_bridge?ssl=true&replicaSet=atlas-vp3q5z0-shard-0&authSource=admin&retryWrites=true&w=majority";
-
 let memoryServer = null;
 
 const connectDB = async () => {
@@ -23,23 +20,28 @@ const connectDB = async () => {
     }
 
     try {
-      // Primary Attempt: SRV URI with IPv4 forced (bypasses ISP DNS SRV restrictions)
+      // Primary Attempt: SRV URI with IPv4 forced
       const conn = await mongoose.connect(mongoUri, {
-        serverSelectionTimeoutMS: 8000,
-        family: 4, // Force IPv4 to prevent querySrv ECONNREFUSED on Sri Lankan ISPs
+        serverSelectionTimeoutMS: 5000,
+        family: 4,
       });
       console.log(`[Database] MongoDB Atlas Connected: ${conn.connection.host}`);
     } catch (primaryErr) {
-      console.warn(`[Database Warning] Primary SRV Connection failed (${primaryErr.message}). Attempting direct node connection...`);
+      console.warn(`[Database Warning] MongoDB Atlas connection failed (${primaryErr.message}). IP may not be whitelisted.`);
+      
+      // Fallback: In-Memory MongoDB for local offline testing if Atlas IP is blocked
       try {
-        // Secondary Attempt: Direct Node URI (bypasses SRV lookup entirely)
-        const connDirect = await mongoose.connect(DEFAULT_ATLAS_DIRECT, {
-          serverSelectionTimeoutMS: 8000,
-          family: 4,
+        console.log("[Database] Initializing In-Memory Fallback MongoDB for offline team testing...");
+        const { MongoMemoryServer } = require("mongodb-memory-server");
+        memoryServer = await MongoMemoryServer.create();
+        const fallbackUri = memoryServer.getUri();
+        const conn = await mongoose.connect(fallbackUri, {
+          serverSelectionTimeoutMS: 5000,
         });
-        console.log(`[Database] MongoDB Atlas Direct Node Connected: ${connDirect.connection.host}`);
-      } catch (directErr) {
-        console.warn(`[Database Warning] Direct connection failed (${directErr.message}). Offline mode active.`);
+        console.log(`[Database] In-Memory Fallback MongoDB Connected: ${conn.connection.host}`);
+      } catch (memErr) {
+        console.error(`[Database Error] Fallback memory server error: ${memErr.message}`);
+        mongoose.set("bufferCommands", false);
       }
     }
   } catch (error) {

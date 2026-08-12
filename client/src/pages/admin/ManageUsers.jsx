@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import api from "../../services/api";
 import Loader from "../../components/Loader";
+import { FaTrash, FaUserCheck, FaUserSlash } from "react-icons/fa";
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
@@ -47,13 +48,25 @@ export default function ManageUsers() {
     }
   };
 
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm("Are you sure you want to permanently delete this user account?")) return;
+    try {
+      await api.delete(`/auth/users/${userId}`);
+      toast.success("User account deleted");
+      setUsers(users.filter((u) => u._id !== userId));
+    } catch (err) {
+      const message = err.response?.data?.message || "Delete failed";
+      toast.error(message);
+    }
+  };
+
   return (
     <div className="space-y-6 py-6">
       
       <div className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 font-outfit">Manage Users</h1>
-          <p className="text-xs text-slate-500">View user directory, assign administrative roles, or suspend accounts.</p>
+          <p className="text-xs text-slate-500">View user directory, assign administrative roles, suspend, or delete accounts.</p>
         </div>
       </div>
 
@@ -92,16 +105,25 @@ export default function ManageUsers() {
                     </td>
                     <td className="p-4 font-mono">{u.location || "Matara"}</td>
                     <td className="p-4 font-mono">{new Date(u.createdAt || Date.now()).toLocaleDateString()}</td>
-                    <td className="p-4 text-right">
+                    <td className="p-4 text-right space-x-2">
                       <button
                         onClick={() => handleToggleBlock(u._id)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors inline-flex items-center space-x-1 ${
                           u.isBlocked
-                            ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                            : "bg-rose-50 text-rose-700 border-rose-200"
+                            ? "bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100"
+                            : "bg-rose-50 text-rose-800 border-rose-200 hover:bg-rose-100"
                         }`}
                       >
-                        {u.isBlocked ? "Unblock Account" : "Suspend Account"}
+                        {u.isBlocked ? <FaUserCheck /> : <FaUserSlash />}
+                        <span>{u.isBlocked ? "Unblock" : "Suspend"}</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteUser(u._id)}
+                        className="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-rose-50 hover:text-rose-600 border border-slate-200 transition-colors inline-flex items-center"
+                        title="Delete User Account"
+                      >
+                        <FaTrash className="text-xs" />
                       </button>
                     </td>
                   </tr>
