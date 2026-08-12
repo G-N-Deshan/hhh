@@ -1,5 +1,8 @@
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
+const { OAuth2Client } = require("google-auth-library");
+
+const googleClient = new OAuth2Client();
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -93,18 +96,39 @@ const loginUser = async (req, res) => {
 // @access  Public
 const googleAuth = async (req, res) => {
   try {
-    const { name, email, googleId, picture, department } = req.body;
+    const { credential, department } = req.body;
 
-    if (!email) {
-      return res.status(400).json({ message: "Google email is required" });
+    if (!credential) {
+      return res.status(400).json({ message: "Google credential is required" });
+    }
+
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      return res.status(500).json({ message: "Google sign-in is not configured on the server" });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, email_verified: emailVerified, name, picture } = payload;
+
+    if (!email || !emailVerified) {
+      return res.status(401).json({ message: "Google account email could not be verified" });
     }
 
     const normalizedEmail = email.toLowerCase().trim();
-    let user = await User.findOne({ email: normalizedEmail }).populate("savedOpportunities");
+    let user = await User
+      .findOne({ $or: [{ googleId }, { email: normalizedEmail }] })
+      .populate("savedOpportunities");
 
     if (user) {
       if (user.isBlocked) {
         return res.status(403).json({ message: "Your account has been suspended by administration." });
+      }
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
       }
     } else {
       // Auto-create new user account with Google credentials
@@ -112,6 +136,7 @@ const googleAuth = async (req, res) => {
       user = await User.create({
         name: name || normalizedEmail.split("@")[0],
         email: normalizedEmail,
+        googleId,
         password: randomPassword,
         role: "student",
         department: department || "Department of Information & Communication Technology",
