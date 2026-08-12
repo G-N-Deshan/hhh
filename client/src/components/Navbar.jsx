@@ -6,8 +6,6 @@ import {
   FaHome,
   FaCompass,
   FaExclamationTriangle,
-  FaQuestionCircle,
-  FaInfoCircle,
   FaEnvelope,
   FaSignOutAlt,
   FaBars,
@@ -46,8 +44,8 @@ export default function Navbar() {
                 <span className="font-extrabold text-xl tracking-tight text-slate-900 font-outfit">
                   Opportunity<span className="text-amber-600">Bridge</span>
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-widest hidden lg:inline-block">
-                  Community Portal
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200 uppercase tracking-widest hidden lg:inline-block">
+                  FoT Ruhuna
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-medium tracking-wide hidden sm:block">
@@ -60,7 +58,7 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
             <Link
               to="/"
-              className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
+              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
                 isActive("/")
                   ? "bg-blue-50 text-blue-700 border border-blue-200"
                   : "text-slate-700 hover:text-blue-600 hover:bg-slate-100"
@@ -72,7 +70,7 @@ export default function Navbar() {
 
             <Link
               to="/opportunities"
-              className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
+              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
                 isActive("/opportunities")
                   ? "bg-blue-50 text-blue-700 border border-blue-200"
                   : "text-slate-700 hover:text-blue-600 hover:bg-slate-100"
@@ -84,7 +82,7 @@ export default function Navbar() {
 
             <Link
               to="/report-barrier"
-              className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
+              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
                 isActive("/report-barrier")
                   ? "bg-rose-50 text-rose-700 border border-rose-200"
                   : "text-slate-700 hover:text-rose-600 hover:bg-slate-100"
@@ -95,32 +93,8 @@ export default function Navbar() {
             </Link>
 
             <Link
-              to="/qa"
-              className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
-                isActive("/qa")
-                  ? "bg-indigo-50 text-indigo-700 border border-indigo-200"
-                  : "text-slate-700 hover:text-indigo-600 hover:bg-slate-100"
-              }`}
-            >
-              <FaQuestionCircle className="text-indigo-600 text-xs" />
-              <span>Q&A Board</span>
-            </Link>
-
-            <Link
-              to="/about"
-              className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
-                isActive("/about")
-                  ? "bg-blue-50 text-blue-700 border border-blue-200"
-                  : "text-slate-700 hover:text-blue-600 hover:bg-slate-100"
-              }`}
-            >
-              <FaInfoCircle className="text-xs" />
-              <span>About</span>
-            </Link>
-
-            <Link
               to="/contact"
-              className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
+              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-1.5 ${
                 isActive("/contact")
                   ? "bg-blue-50 text-blue-700 border border-blue-200"
                   : "text-slate-700 hover:text-blue-600 hover:bg-slate-100"
@@ -159,7 +133,7 @@ export default function Navbar() {
 
                 <button
                   onClick={handleLogout}
-                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition-colors"
+                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition-colors cursor-pointer"
                   title="Logout"
                 >
                   <FaSignOutAlt className="text-sm" />
@@ -221,11 +195,11 @@ export default function Navbar() {
             Report Barrier
           </Link>
           <Link
-            to="/qa"
+            to="/contact"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-indigo-700 bg-indigo-50/50"
+            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
           >
-            Community Q&A Board
+            Contact
           </Link>
 
           <div className="pt-4 border-t border-slate-200 space-y-2">
