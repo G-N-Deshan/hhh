@@ -6,6 +6,7 @@ const {
   createOpportunity,
   updateOpportunity,
   deleteOpportunity,
+  addOpportunityReview,
 } = require("../controllers/opportunityController");
 const { protect, providerOrAdmin } = require("../middleware/authMiddleware");
 
@@ -19,5 +20,9 @@ router
   .get(getOpportunityById)
   .put(protect, providerOrAdmin, updateOpportunity)
   .delete(protect, providerOrAdmin, deleteOpportunity);
+
+router
+  .route("/:id/reviews")
+  .post(protect, addOpportunityReview);
 
 module.exports = router;

@@ -615,4 +615,88 @@ export const dataService = {
       oppDepartmentStats: Object.keys(deptMap).map((k) => ({ _id: k, count: deptMap[k] })),
     };
   },
+
+  // Opportunity Review System
+  async addOpportunityReview(id, reviewData) {
+    try {
+      const { data } = await api.post(`/opportunities/${id}/reviews`, reviewData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API add opportunity review error, saving locally:", err.message);
+    }
+    const list = getStoredOpportunities();
+    const target = list.find((o) => o._id === id || o.id === id);
+    if (target) {
+      target.reviews = target.reviews || [];
+      const newRev = {
+        _id: "rev_local_" + Date.now(),
+        ...reviewData,
+        createdAt: new Date().toISOString(),
+      };
+      target.reviews.push(newRev);
+      target.numReviews = target.reviews.length;
+      target.averageRating =
+        target.reviews.reduce((acc, item) => item.rating + acc, 0) / target.reviews.length;
+
+      localStorage.setItem("local_opportunities", JSON.stringify(list));
+      return { message: "Review added", opportunity: target };
+    }
+  },
+
+  // Site Platform Review System
+  async getSiteReviews() {
+    try {
+      const { data } = await api.get("/site-reviews");
+      if (data) return data;
+    } catch (err) {
+      console.warn("API get site reviews error, returning local dataset:", err.message);
+    }
+    const local = JSON.parse(localStorage.getItem("local_site_reviews") || "[]");
+    if (local.length === 0) {
+      const initialSiteReviews = [
+        {
+          _id: "srev_1",
+          userName: "Kasun Silva",
+          userRole: "student",
+          userDepartment: "Department of Engineering Technology",
+          rating: 5,
+          title: "Incredible Faculty Resource Platform!",
+          comment: "OpportunityBridge helped me secure an embedded systems internship at Dialog Axiata. Highly recommended for all FoT undergraduates!",
+          createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          _id: "srev_2",
+          userName: "Nipuna Deshan",
+          userRole: "student",
+          userDepartment: "Department of Information & Communication Technology",
+          rating: 5,
+          title: "Great Barrier Reporting & Accessibility",
+          comment: "Reporting physical & website accessibility issues is super fast. The Dean's office responded to my exam portal barrier report within 2 days.",
+          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+      ];
+      return { reviews: initialSiteReviews, total: 2, averageRating: 5.0 };
+    }
+    const total = local.length;
+    const avg = total > 0 ? local.reduce((a, b) => a + b.rating, 0) / total : 5.0;
+    return { reviews: local, total, averageRating: parseFloat(avg.toFixed(1)) };
+  },
+
+  async createSiteReview(reviewData) {
+    try {
+      const { data } = await api.post("/site-reviews", reviewData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API create site review error, saving locally:", err.message);
+    }
+    const local = JSON.parse(localStorage.getItem("local_site_reviews") || "[]");
+    const newRev = {
+      _id: "srev_local_" + Date.now(),
+      ...reviewData,
+      createdAt: new Date().toISOString(),
+    };
+    local.unshift(newRev);
+    localStorage.setItem("local_site_reviews", JSON.stringify(local));
+    return newRev;
+  },
 };

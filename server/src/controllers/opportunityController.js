@@ -193,10 +193,44 @@ const deleteOpportunity = async (req, res) => {
   }
 };
 
+// @desc    Add a review for an opportunity
+// @route   POST /api/opportunities/:id/reviews
+// @access  Private
+const addOpportunityReview = async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+    const opportunity = await Opportunity.findById(req.params.id);
+
+    if (!opportunity) {
+      return res.status(404).json({ message: "Opportunity not found" });
+    }
+
+    const review = {
+      user: req.user._id,
+      userName: req.user.name,
+      userDepartment: req.user.department || "General",
+      rating: Number(rating),
+      comment: comment.trim(),
+    };
+
+    opportunity.reviews.push(review);
+    opportunity.numReviews = opportunity.reviews.length;
+    opportunity.averageRating =
+      opportunity.reviews.reduce((acc, item) => item.rating + acc, 0) / opportunity.reviews.length;
+
+    await opportunity.save();
+    res.status(201).json({ message: "Review added successfully", opportunity });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getOpportunities,
   getOpportunityById,
   createOpportunity,
   updateOpportunity,
   deleteOpportunity,
+  addOpportunityReview,
 };
+
