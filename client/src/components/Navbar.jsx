@@ -34,7 +34,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* Logo / Project Name */}
+          {/* Logo / Generic Project Name */}
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-rose-700 via-rose-600 to-amber-500 p-0.5 shadow-md group-hover:scale-105 transition-transform">
               <div className="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
@@ -45,9 +45,6 @@ export default function Navbar() {
               <div className="flex items-center space-x-2">
                 <span className="font-extrabold text-xl tracking-tight text-slate-900 font-outfit">
                   Opportunity<span className="text-amber-600">Bridge</span>
-                </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200 uppercase tracking-widest hidden lg:inline-block">
-                  FoT Ruhuna
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-medium tracking-wide hidden sm:block">

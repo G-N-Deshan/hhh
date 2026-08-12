@@ -13,7 +13,7 @@ export default function Contact() {
     e.preventDefault();
     setSubmitting(true);
     setTimeout(() => {
-      toast.success("Thank you! Your message has been sent to Faculty Administration.");
+      toast.success("Thank you! Your message has been sent to Administration.");
       setName("");
       setEmail("");
       setSubject("");
@@ -28,7 +28,7 @@ export default function Contact() {
       <div className="text-center space-y-2">
         <h1 className="text-4xl font-extrabold text-slate-900 font-outfit">Contact Us</h1>
         <p className="text-sm text-slate-600">
-          Faculty of Technology, University of Ruhuna, Sri Lanka
+          We're here to answer questions and support your path to new opportunities.
         </p>
       </div>
 
@@ -38,9 +38,9 @@ export default function Contact() {
         <div className="space-y-4">
           <div className="glass-panel p-5 rounded-2xl border border-slate-200 bg-white space-y-2">
             <FaMapMarkerAlt className="text-amber-600 text-xl" />
-            <h3 className="text-sm font-bold text-slate-900 font-outfit">Faculty Location</h3>
+            <h3 className="text-sm font-bold text-slate-900 font-outfit">Our Location</h3>
             <p className="text-xs text-slate-600">
-              Karagoda Uyangoda, Kamburupitiya, Matara, Sri Lanka
+              123 Community Hub Street, Colombo, Sri Lanka
             </p>
           </div>
 
@@ -48,15 +48,15 @@ export default function Contact() {
             <FaEnvelope className="text-rose-600 text-xl" />
             <h3 className="text-sm font-bold text-slate-900 font-outfit">Email Support</h3>
             <p className="text-xs text-slate-600">
-              info@fot.ruh.ac.lk / support@fot.ruh.ac.lk
+              info@opportunitybridge.org / support@opportunitybridge.org
             </p>
           </div>
 
           <div className="glass-panel p-5 rounded-2xl border border-slate-200 bg-white space-y-2">
             <FaPhone className="text-emerald-600 text-xl" />
-            <h3 className="text-sm font-bold text-slate-900 font-outfit">General Office Phone</h3>
+            <h3 className="text-sm font-bold text-slate-900 font-outfit">General Phone</h3>
             <p className="text-xs text-slate-600">
-              +94 (0)41 2292200 / +94 (0)41 2292202
+              +94 (0)11 2345678 / +94 (0)11 2345679
             </p>
           </div>
         </div>
@@ -72,7 +72,7 @@ export default function Contact() {
                 <input
                   type="text"
                   required
-                  placeholder="Nimal Silva"
+                  placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-white text-slate-900 px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:outline-none text-sm"
@@ -84,7 +84,7 @@ export default function Contact() {
                 <input
                   type="email"
                   required
-                  placeholder="student@fot.ruh.ac.lk"
+                  placeholder="user@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-white text-slate-900 px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:outline-none text-sm"
