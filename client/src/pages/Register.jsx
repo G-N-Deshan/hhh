@@ -20,9 +20,12 @@ export default function Register() {
 
   // Initialize official Google Identity Services (GIS) SDK
   useEffect(() => {
-    const googleClientId =
-      import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-      "1060018310736-l2r63l6edmjo06.apps.googleusercontent.com";
+    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+    if (!googleClientId) {
+      console.error("VITE_GOOGLE_CLIENT_ID is not configured");
+      return undefined;
+    }
 
     const initGoogleGis = () => {
       if (window.google?.accounts?.id) {
@@ -50,39 +53,36 @@ export default function Register() {
       }
     };
 
-    const timer = setTimeout(initGoogleGis, 300);
-    return () => clearTimeout(timer);
+    initGoogleGis();
+    const interval = window.setInterval(() => {
+      if (window.google?.accounts?.id) {
+        initGoogleGis();
+        window.clearInterval(interval);
+      }
+    }, 100);
+    const timeout = window.setTimeout(() => window.clearInterval(interval), 10000);
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(timeout);
+    };
   }, []);
 
   const handleGoogleCredentialResponse = async (response) => {
     if (!response.credential) return;
     try {
-      const base64Url = response.credential.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join("")
-      );
-
-      const payload = JSON.parse(jsonPayload);
-
       setLoading(true);
       const res = await googleLogin({
-        email: payload.email,
-        name: payload.name || payload.email.split("@")[0],
-        googleId: payload.sub,
-        picture: payload.picture,
+        credential: response.credential,
         department: department || "Department of Information & Communication Technology",
       });
-      setLoading(false);
 
       if (res.success) {
         navigate("/opportunities");
       }
     } catch (err) {
-      toast.error("Failed to parse Google account response");
+      toast.error("Google sign-in could not be completed");
+    } finally {
+      setLoading(false);
     }
   };
 
