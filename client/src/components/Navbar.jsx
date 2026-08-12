@@ -46,8 +46,8 @@ export default function Navbar() {
                 <span className="font-extrabold text-xl tracking-tight text-slate-900 font-outfit">
                   Opportunity<span className="text-amber-600">Bridge</span>
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200 uppercase tracking-widest hidden lg:inline-block">
-                  FoT Ruhuna
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-widest hidden lg:inline-block">
+                  Community Portal
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-medium tracking-wide hidden sm:block">
