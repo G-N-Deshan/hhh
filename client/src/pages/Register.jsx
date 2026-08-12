@@ -182,38 +182,6 @@ export default function Register() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                Department
-              </label>
-              <select
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
-                className="w-full bg-white text-slate-900 px-3 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:outline-none text-xs"
-              >
-                <option value="Department of Information & Communication Technology">Dept of ICT</option>
-                <option value="Department of Engineering Technology">Dept of ET</option>
-                <option value="Department of Biosystems Technology">Dept of BST</option>
-                <option value="General">General</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                Account Type
-              </label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full bg-white text-slate-900 px-3 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:outline-none text-xs"
-              >
-                <option value="student">Student</option>
-                <option value="provider">Opportunity Provider</option>
-              </select>
-            </div>
-          </div>
-
           <button
             type="submit"
             disabled={loading}
@@ -235,4 +203,3 @@ export default function Register() {
     </div>
   );
 }
-
