@@ -47,9 +47,12 @@ export default function Contact() {
           <div className="glass-panel p-5 rounded-2xl border border-slate-200 bg-white space-y-2">
             <FaEnvelope className="text-rose-600 text-xl" />
             <h3 className="text-sm font-bold text-slate-900 font-outfit">Email Support</h3>
-            <p className="text-xs text-slate-600">
-              info@opportunitybridge.org / support@opportunitybridge.org
-            </p>
+            <div className="text-xs text-slate-600 space-y-1">
+              <p><span className="font-semibold text-slate-700">General:</span> info@opportunitybridge.org</p>
+              <p><span className="font-semibold text-slate-700">Support:</span> support@opportunitybridge.org</p>
+              <p><span className="font-semibold text-slate-700">Admissions:</span> admissions@opportunitybridge.org</p>
+              <p><span className="font-semibold text-slate-700">Partnerships:</span> partners@opportunitybridge.org</p>
+            </div>
           </div>
 
           <div className="glass-panel p-5 rounded-2xl border border-slate-200 bg-white space-y-2">
@@ -118,7 +121,7 @@ export default function Contact() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-all font-outfit flex items-center space-x-2"
+              className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-all font-outfit flex items-center space-x-2 cursor-pointer"
             >
               <FaPaperPlane />
               <span>{submitting ? "Sending..." : "Send Message"}</span>
