@@ -9,13 +9,11 @@ import {
   FaQuestionCircle,
   FaInfoCircle,
   FaEnvelope,
-  FaShieldAlt,
   FaSignOutAlt,
-  FaSignInAlt,
-  FaUserPlus,
   FaBars,
   FaTimes,
   FaUser,
+  FaHeart,
 } from "react-icons/fa";
 
 export default function Navbar() {
@@ -36,7 +34,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* Logo / Generic Project Name */}
+          {/* Logo / Project Name */}
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-rose-700 via-rose-600 to-amber-500 p-0.5 shadow-md group-hover:scale-105 transition-transform">
               <div className="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
@@ -47,6 +45,9 @@ export default function Navbar() {
               <div className="flex items-center space-x-2">
                 <span className="font-extrabold text-xl tracking-tight text-slate-900 font-outfit">
                   Opportunity<span className="text-amber-600">Bridge</span>
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200 uppercase tracking-widest hidden lg:inline-block">
+                  FoT Ruhuna
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-medium tracking-wide hidden sm:block">
@@ -133,9 +134,18 @@ export default function Navbar() {
           {/* Desktop Right User Authentication Actions */}
           <div className="hidden md:flex items-center space-x-3">
             {user ? (
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 <Link
-                  to={isAdmin ? "/admin/dashboard" : "/user/dashboard"}
+                  to="/wishlist"
+                  className="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-all border border-rose-200 flex items-center space-x-1"
+                  title="My Wishlist"
+                >
+                  <FaHeart className="text-rose-600" />
+                  <span>Wishlist</span>
+                </Link>
+
+                <Link
+                  to={isAdmin ? "/admin/dashboard" : "/profile"}
                   className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all border border-slate-200"
                 >
                   <FaUser className="text-blue-600" />
@@ -217,37 +227,32 @@ export default function Navbar() {
           >
             Community Q&A Board
           </Link>
-          <Link
-            to="/about"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
-          >
-            About
-          </Link>
-          <Link
-            to="/contact"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
-          >
-            Contact
-          </Link>
 
           <div className="pt-4 border-t border-slate-200 space-y-2">
             {user ? (
               <>
                 <Link
-                  to={isAdmin ? "/admin/dashboard" : "/user/dashboard"}
+                  to="/wishlist"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block w-full text-center py-2.5 rounded-xl bg-slate-100 text-slate-900 text-xs font-bold"
+                  className="block w-full text-center py-2.5 rounded-xl bg-rose-50 text-rose-800 text-xs font-bold"
                 >
-                  My Dashboard ({user.name})
+                  My Wishlist ({user.savedOpportunities?.length || 0})
                 </Link>
+
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block w-full text-center py-2.5 rounded-xl bg-blue-50 text-blue-800 text-xs font-bold"
+                >
+                  My Profile ({user.name})
+                </Link>
+
                 <button
                   onClick={() => {
                     handleLogout();
                     setMobileMenuOpen(false);
                   }}
-                  className="block w-full text-center py-2.5 rounded-xl bg-rose-50 text-rose-700 text-xs font-bold"
+                  className="block w-full text-center py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold"
                 >
                   Sign Out
                 </button>

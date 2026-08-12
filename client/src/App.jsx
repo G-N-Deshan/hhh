@@ -22,6 +22,7 @@ import NotFound from "./pages/NotFound";
 
 // User Pages
 import UserDashboard from "./pages/user/UserDashboard";
+import UserProfilePage from "./pages/user/UserProfilePage";
 
 // Admin Pages
 import AdminLogin from "./pages/AdminLogin";
@@ -75,8 +76,10 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
-              {/* User Dashboard */}
+              {/* User Dashboard & Dedicated Profile / Wishlist Pages */}
               <Route path="/dashboard" element={<UserDashboard />} />
+              <Route path="/profile" element={<UserProfilePage />} />
+              <Route path="/wishlist" element={<UserProfilePage />} />
 
               {/* Admin Portal Routes */}
               <Route path="/admin" element={<AdminRouteGuard><AdminDashboardPage /></AdminRouteGuard>} />
