@@ -110,22 +110,29 @@ export default function Home() {
   return (
     <div className="space-y-16 pb-12 text-slate-800">
       
-      {/* COMFORTABLE CLEAN HERO SECTION */}
-      <section className="glass-panel rounded-3xl p-8 sm:p-12 bg-white border border-slate-200 text-slate-900 relative overflow-hidden shadow-sm">
+      {/* HERO SECTION WITH BACKGROUND IMAGE */}
+      <section className="relative rounded-3xl p-8 sm:p-12 text-slate-900 overflow-hidden shadow-sm border border-slate-200">
         
+        {/* Background Image Container */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1920&auto=format&fit=crop')`,
+          }}
+        />
+        
+        {/* Light Gradient Overlay to preserve clear contrast for text */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/85 to-white/95 backdrop-blur-[2px]" />
+
+        {/* Hero Content */}
         <div className="relative z-10 max-w-3xl mx-auto text-center space-y-6">
-          
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold tracking-wider uppercase font-mono">
-            <FaGraduationCap className="text-sm text-blue-600" />
-            <span>Faculty of Technology • University of Ruhuna</span>
-          </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-outfit tracking-tight leading-tight text-slate-900">
-            Connecting Faculty <span className="text-blue-600">Opportunities</span>, Breaking Access Barriers.
+            Connecting <span className="text-blue-600">Opportunities</span>, Breaking Access Barriers.
           </h1>
 
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto font-sans leading-relaxed">
-            Discover scholarships, internships, part-time jobs, and support programs tailored for undergraduates. Report physical & digital accessibility barriers directly to faculty admins.
+            Discover scholarships, internships, part-time jobs, and support programs tailored for undergraduates. Report physical & digital accessibility barriers directly to admins.
           </p>
 
           {/* Search Input Box */}
@@ -137,7 +144,7 @@ export default function Home() {
                 placeholder="Search scholarships, internships, jobs, or training..."
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                className="w-full bg-slate-50 text-slate-900 border border-slate-300 pl-11 pr-32 py-4 rounded-2xl shadow-sm focus:outline-none focus:border-blue-500 text-sm font-outfit placeholder-slate-400"
+                className="w-full bg-white/90 text-slate-900 border border-slate-300 pl-11 pr-32 py-4 rounded-2xl shadow-md focus:outline-none focus:border-blue-500 text-sm font-outfit placeholder-slate-400 backdrop-blur-sm"
               />
               <button
                 type="submit"
@@ -152,19 +159,19 @@ export default function Home() {
           <div className="flex flex-wrap justify-center gap-3 pt-4 text-xs font-semibold text-slate-600">
             <Link
               to="/opportunities?category=Scholarships"
-              className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all flex items-center space-x-1.5 text-slate-800"
+              className="px-3.5 py-1.5 rounded-xl bg-white/80 hover:bg-white border border-slate-200/80 transition-all flex items-center space-x-1.5 text-slate-800 shadow-sm backdrop-blur-sm"
             >
               <span>🎓 Scholarships</span>
             </Link>
             <Link
               to="/opportunities?category=Internships"
-              className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all flex items-center space-x-1.5 text-slate-800"
+              className="px-3.5 py-1.5 rounded-xl bg-white/80 hover:bg-white border border-slate-200/80 transition-all flex items-center space-x-1.5 text-slate-800 shadow-sm backdrop-blur-sm"
             >
               <span>💼 Internships</span>
             </Link>
             <Link
               to="/report-barrier"
-              className="px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-800 transition-all flex items-center space-x-1.5"
+              className="px-3.5 py-1.5 rounded-xl bg-rose-50/90 hover:bg-rose-100 border border-rose-200 text-rose-800 transition-all flex items-center space-x-1.5 shadow-sm backdrop-blur-sm"
             >
               <span>⚠️ Report Barrier</span>
             </Link>
@@ -178,7 +185,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 font-outfit">Explore by Category</h2>
-            <p className="text-xs text-slate-500">Targeted support streams for all technology undergraduates</p>
+            <p className="text-xs text-slate-500">Targeted support streams for all undergraduates</p>
           </div>
           <Link
             to="/opportunities"
@@ -209,7 +216,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 font-outfit">Featured Opportunities</h2>
-            <p className="text-xs text-slate-500">Latest active listings verified by Dean's Office & Lecturers</p>
+            <p className="text-xs text-slate-500">Latest active listings verified by Admins & Lecturers</p>
           </div>
           <Link
             to="/opportunities"
@@ -393,7 +400,7 @@ export default function Home() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Great Faculty Resource Platform!"
+                  placeholder="e.g. Great Resource Platform!"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   className="w-full bg-slate-50 text-slate-900 px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:bg-white focus:outline-none focus:border-blue-500"
