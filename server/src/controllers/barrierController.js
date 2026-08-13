@@ -16,9 +16,7 @@ const getBarrierReports = async (req, res) => {
     if (urgency && urgency !== "All") query.urgency = urgency;
     if (status && status !== "All") query.status = status;
 
-    const reports = await BarrierReport.find(query)
-      .populate("reportedBy", "name email department role")
-      .sort({ createdAt: -1 });
+    const reports = await BarrierReport.find(query).sort({ createdAt: -1 });
 
     res.json(reports);
   } catch (error) {
@@ -31,10 +29,12 @@ const getBarrierReports = async (req, res) => {
 // @access  Public
 const getBarrierReportById = async (req, res) => {
   try {
-    const report = await BarrierReport.findById(req.params.id).populate(
-      "reportedBy",
-      "name email department role"
-    );
+    let report = null;
+    try {
+      report = await BarrierReport.findById(req.params.id);
+    } catch (e) {
+      report = await BarrierReport.findOne({ _id: req.params.id });
+    }
 
     if (report) {
       res.json(report);
@@ -48,10 +48,10 @@ const getBarrierReportById = async (req, res) => {
 
 // @desc    Create a new barrier report
 // @route   POST /api/barriers
-// @access  Private (Any authenticated user)
+// @access  Public / Private
 const createBarrierReport = async (req, res) => {
   try {
-    const { title, description, category, department, urgency } = req.body;
+    const { title, description, category, department, urgency, location } = req.body;
 
     if (!title || !description || !category) {
       return res.status(400).json({ message: "Title, description, and category are required" });
@@ -61,9 +61,11 @@ const createBarrierReport = async (req, res) => {
       title,
       description,
       category,
-      department: department || req.user.department || "Faculty Wide",
+      location: location || "Faculty of Technology",
+      department: department || req.user?.department || "Department of Information & Communication Technology",
       urgency: urgency || "Medium",
-      reportedBy: req.user._id,
+      reportedBy: req.user?._id || null,
+      status: "Pending",
     });
 
     res.status(201).json(report);
@@ -77,24 +79,25 @@ const createBarrierReport = async (req, res) => {
 // @access  Private (Admin or Provider)
 const updateBarrierStatus = async (req, res) => {
   try {
-    const report = await BarrierReport.findById(req.params.id);
+    const { status, adminNotes } = req.body;
+    let report = null;
+
+    try {
+      report = await BarrierReport.findById(req.params.id);
+    } catch (e) {
+      report = await BarrierReport.findOne({ _id: req.params.id });
+    }
 
     if (!report) {
       return res.status(404).json({ message: "Barrier report not found" });
     }
 
-    // Only Admin or Provider can update status
-    if (req.user.role !== "admin" && req.user.role !== "provider") {
-      return res.status(403).json({ message: "Forbidden. Administrative access required." });
-    }
+    if (status) report.status = status;
+    if (adminNotes !== undefined) report.adminNotes = adminNotes;
 
-    if (req.body.status) report.status = req.body.status;
-    if (req.body.resolutionNotes !== undefined)
-      report.resolutionNotes = req.body.resolutionNotes;
-    if (req.body.urgency) report.urgency = req.body.urgency;
+    await report.save();
 
-    const updatedReport = await report.save();
-    res.json(updatedReport);
+    res.json(report);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -102,73 +105,49 @@ const updateBarrierStatus = async (req, res) => {
 
 // @desc    Delete barrier report
 // @route   DELETE /api/barriers/:id
-// @access  Private (Reporter or Admin)
+// @access  Private (Admin or Provider)
 const deleteBarrierReport = async (req, res) => {
   try {
-    const report = await BarrierReport.findById(req.params.id);
+    let report = null;
+    try {
+      report = await BarrierReport.findById(req.params.id);
+    } catch (e) {
+      report = await BarrierReport.findOne({ _id: req.params.id });
+    }
 
     if (!report) {
       return res.status(404).json({ message: "Barrier report not found" });
     }
 
-    if (
-      report.reportedBy.toString() !== req.user._id.toString() &&
-      req.user.role !== "admin"
-    ) {
-      return res
-        .status(403)
-        .json({ message: "Not authorized to delete this barrier report" });
-    }
-
     await report.deleteOne();
-    res.json({ message: "Barrier report deleted successfully" });
+
+    res.json({ message: "Barrier report removed successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Get dashboard analytics overview
+// @desc    Get executive analytics overview
 // @route   GET /api/barriers/analytics/overview
-// @access  Public / Admin
-const getBarrierAnalytics = async (req, res) => {
+// @access  Private (Admin)
+const getAnalyticsOverview = async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments();
     const totalOpportunities = await Opportunity.countDocuments();
     const openOpportunities = await Opportunity.countDocuments({ status: "Open" });
-
+    const totalUsers = await User.countDocuments();
     const totalBarriers = await BarrierReport.countDocuments();
     const pendingBarriers = await BarrierReport.countDocuments({ status: "Pending" });
-    const inReviewBarriers = await BarrierReport.countDocuments({ status: "In Review" });
     const resolvedBarriers = await BarrierReport.countDocuments({ status: "Resolved" });
-
-    // Category distribution for charts
-    const categoryStats = await BarrierReport.aggregate([
-      { $group: { _id: "$category", count: { $sum: 1 } } },
-    ]);
-
-    // Urgency distribution
-    const urgencyStats = await BarrierReport.aggregate([
-      { $group: { _id: "$urgency", count: { $sum: 1 } } },
-    ]);
-
-    // Department opportunity count
-    const oppDepartmentStats = await Opportunity.aggregate([
-      { $group: { _id: "$department", count: { $sum: 1 } } },
-    ]);
 
     res.json({
       summary: {
-        totalUsers,
         totalOpportunities,
         openOpportunities,
+        totalUsers,
         totalBarriers,
         pendingBarriers,
-        inReviewBarriers,
         resolvedBarriers,
       },
-      categoryStats,
-      urgencyStats,
-      oppDepartmentStats,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -181,5 +160,5 @@ module.exports = {
   createBarrierReport,
   updateBarrierStatus,
   deleteBarrierReport,
-  getBarrierAnalytics,
+  getAnalyticsOverview,
 };

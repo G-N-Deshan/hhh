@@ -4,6 +4,26 @@ import api from "../services/api";
 
 const AuthContext = createContext();
 
+const saveToRegisteredUsers = (newUser) => {
+  if (!newUser || !newUser.email) return;
+  try {
+    const list = JSON.parse(localStorage.getItem("local_users") || "[]");
+    if (!list.some((u) => u.email.toLowerCase() === newUser.email.toLowerCase())) {
+      list.unshift({
+        _id: newUser._id || "user_" + Date.now(),
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role || "student",
+        department: newUser.department || "Department of Information & Communication Technology",
+        createdAt: new Date().toISOString(),
+      });
+      localStorage.setItem("local_users", JSON.stringify(list));
+    }
+  } catch (e) {
+    console.warn("Failed saving user to local registry:", e.message);
+  }
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,6 +34,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const parsed = JSON.parse(storedUser);
         setUser(parsed);
+        saveToRegisteredUsers(parsed);
       } catch (err) {
         localStorage.removeItem("userInfo");
       }
@@ -26,6 +47,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.post("/auth/login", { email, password });
       setUser(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
+      saveToRegisteredUsers(data);
       toast.success(`Welcome back, ${data.name}!`);
       return { success: true };
     } catch (error) {
@@ -43,9 +65,11 @@ export const AuthProvider = ({ children }) => {
         role,
         department: "Department of Information & Communication Technology",
         savedOpportunities: JSON.parse(localStorage.getItem("local_wishlist") || "[]"),
+        token: "mock_session_token_" + Date.now(),
       };
       setUser(fallbackUser);
       localStorage.setItem("userInfo", JSON.stringify(fallbackUser));
+      saveToRegisteredUsers(fallbackUser);
       toast.success(`Welcome back, ${fallbackUser.name}!`);
       return { success: true };
     }
@@ -56,6 +80,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.post("/auth/google", googleData);
       setUser(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
+      saveToRegisteredUsers(data);
       toast.success(`Successfully signed in as ${data.name}!`);
       return { success: true };
     } catch (error) {
@@ -67,9 +92,11 @@ export const AuthProvider = ({ children }) => {
         role: "student",
         department: googleData.department || "Department of Information & Communication Technology",
         savedOpportunities: JSON.parse(localStorage.getItem("local_wishlist") || "[]"),
+        token: "mock_session_token_" + Date.now(),
       };
       setUser(fallbackUser);
       localStorage.setItem("userInfo", JSON.stringify(fallbackUser));
+      saveToRegisteredUsers(fallbackUser);
       toast.success(`Signed in as ${fallbackUser.name}!`);
       return { success: true };
     }
@@ -80,6 +107,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.post("/auth/register", userData);
       setUser(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
+      saveToRegisteredUsers(data);
       toast.success("Account created successfully!");
       return { success: true };
     } catch (error) {
@@ -89,11 +117,13 @@ export const AuthProvider = ({ children }) => {
         name: userData.name || "New Student",
         email: userData.email,
         role: userData.role || "student",
-        department: userData.department || "Department of Information & Communication Technology",
+        department: "Department of Information & Communication Technology",
         savedOpportunities: [],
+        token: "mock_session_token_" + Date.now(),
       };
       setUser(fallbackUser);
       localStorage.setItem("userInfo", JSON.stringify(fallbackUser));
+      saveToRegisteredUsers(fallbackUser);
       toast.success("Account created successfully!");
       return { success: true };
     }
@@ -110,35 +140,39 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.put("/auth/profile", profileData);
       setUser(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
+      saveToRegisteredUsers(data);
       toast.success("Profile updated successfully!");
       return { success: true };
     } catch (error) {
+      console.warn("Backend profile update error, fallback session:", error.message);
       const updatedUser = { ...user, ...profileData };
       setUser(updatedUser);
       localStorage.setItem("userInfo", JSON.stringify(updatedUser));
-      toast.success("Profile updated!");
+      saveToRegisteredUsers(updatedUser);
+      toast.success("Profile updated locally");
       return { success: true };
     }
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        setUser,
-        loading,
-        login,
-        googleLogin,
-        register,
-        logout,
-        updateProfile,
-        isAdmin: user?.role === "admin",
-        isProvider: user?.role === "provider" || user?.role === "admin",
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = {
+    user,
+    loading,
+    login,
+    googleLogin,
+    register,
+    logout,
+    updateProfile,
+    isAdmin: user?.role === "admin",
+    isProvider: user?.role === "provider" || user?.role === "admin",
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

@@ -2,21 +2,24 @@ const Application = require("../models/Application");
 const Opportunity = require("../models/Opportunity");
 
 // @desc    Apply for an opportunity
-// @route   POST /api/opportunities/:id/apply
+// @route   POST /api/applications/opportunity/:id/apply
 // @access  Private / Public (optional user)
 const applyForOpportunity = async (req, res) => {
   try {
     const opportunityId = req.params.id;
-    const { applicantName, applicantEmail, studentId, coverNote } = req.body;
+    const { applicantName, applicantEmail, studentId, coverNote, opportunityTitle } = req.body;
 
-    const opportunity = await Opportunity.findById(opportunityId);
-    if (!opportunity) {
-      return res.status(404).json({ message: "Opportunity not found" });
+    let title = opportunityTitle || "Faculty Opportunity Listing";
+    try {
+      const opportunity = await Opportunity.findById(opportunityId);
+      if (opportunity) title = opportunity.title;
+    } catch (err) {
+      console.warn("Opportunity lookup notice:", err.message);
     }
 
     const application = await Application.create({
       opportunity: opportunityId,
-      opportunityTitle: opportunity.title,
+      opportunityTitle: title,
       applicant: req.user ? req.user._id : null,
       applicantName: applicantName || req.user?.name || "Applicant",
       applicantEmail: applicantEmail || req.user?.email || "applicant@fot.ruh.ac.lk",
@@ -40,10 +43,11 @@ const applyForOpportunity = async (req, res) => {
 const getMyApplications = async (req, res) => {
   try {
     const applications = await Application.find({
-      $or: [{ applicant: req.user._id }, { applicantEmail: req.user.email }],
-    })
-      .populate("opportunity", "title category department location deadline contactEmail")
-      .sort({ createdAt: -1 });
+      $or: [
+        { applicant: req.user?._id },
+        { applicantEmail: req.user?.email },
+      ],
+    }).sort({ createdAt: -1 });
 
     res.json(applications);
   } catch (error) {
@@ -56,11 +60,7 @@ const getMyApplications = async (req, res) => {
 // @access  Private/Admin
 const getAllApplications = async (req, res) => {
   try {
-    const applications = await Application.find()
-      .populate("opportunity", "title category department location deadline contactEmail")
-      .populate("applicant", "name email department role")
-      .sort({ createdAt: -1 });
-
+    const applications = await Application.find().sort({ createdAt: -1 });
     res.json(applications);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -84,7 +84,10 @@ const updateApplicationStatus = async (req, res) => {
 
     await application.save();
 
-    res.json({ message: "Application status updated successfully", application });
+    res.json({
+      message: "Application updated successfully",
+      application,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -102,6 +105,7 @@ const deleteApplication = async (req, res) => {
     }
 
     await application.deleteOne();
+
     res.json({ message: "Application removed successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });

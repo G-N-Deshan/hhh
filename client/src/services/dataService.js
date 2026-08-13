@@ -423,29 +423,21 @@ export const dataService = {
   },
 
   async getAllApplications() {
+    let serverApps = [];
     try {
       const { data } = await api.get("/applications");
-      if (Array.isArray(data)) return data;
+      if (Array.isArray(data)) serverApps = data;
     } catch (err) {
-      console.warn("API getAllApplications error, returning local applications:", err.message);
+      console.warn("API getAllApplications notice:", err.message);
     }
     const localApps = JSON.parse(localStorage.getItem("local_applications") || "[]");
-    if (localApps.length === 0) {
-      return [
-        {
-          _id: "app_demo_1",
-          opportunityTitle: "Full-Stack Software Engineering Intern - Virtusa",
-          applicantName: "Nipuna Deshan",
-          applicantEmail: "tech.student@fot.ruh.ac.lk",
-          studentId: "TG/2022/1004",
-          coverNote: "I am a 3rd year ICT undergraduate passionate about MERN stack web development.",
-          status: "Under Review",
-          adminNotes: "Resume forwarded to Virtusa HR Coordinator.",
-          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        },
-      ];
-    }
-    return localApps;
+    const combined = [...serverApps];
+    localApps.forEach((loc) => {
+      if (!combined.some((s) => (s._id || s.id).toString() === (loc._id || loc.id).toString())) {
+        combined.push(loc);
+      }
+    });
+    return combined;
   },
 
   async updateApplicationStatus(id, updateData) {
@@ -475,14 +467,15 @@ export const dataService = {
 
   // Contact Support Messages API
   async sendContactMessage(msgData) {
+    let created = null;
     try {
       const { data } = await api.post("/contact", msgData);
-      if (data) return data;
+      if (data && data.contactMsg) created = data.contactMsg;
     } catch (err) {
       console.warn("API sendContactMessage error, saving locally:", err.message);
     }
     const localMsgs = JSON.parse(localStorage.getItem("local_contact_messages") || "[]");
-    const newMsg = {
+    const newMsg = created || {
       _id: "cmsg_local_" + Date.now(),
       ...msgData,
       status: "Unread",
@@ -495,28 +488,21 @@ export const dataService = {
   },
 
   async getContactMessages() {
+    let serverMsgs = [];
     try {
       const { data } = await api.get("/contact");
-      if (Array.isArray(data)) return data;
+      if (Array.isArray(data)) serverMsgs = data;
     } catch (err) {
-      console.warn("API getContactMessages error, returning local messages:", err.message);
+      console.warn("API getContactMessages notice:", err.message);
     }
     const localMsgs = JSON.parse(localStorage.getItem("local_contact_messages") || "[]");
-    if (localMsgs.length === 0) {
-      return [
-        {
-          _id: "cmsg_demo_1",
-          name: "Sahan Wickramasinghe",
-          email: "sahan.w@fot.ruh.ac.lk",
-          subject: "Inquiry regarding scholarship deadline extensions",
-          message: "Could you please clarify if the Mahapola bursary supplementary document deadline will be extended?",
-          status: "Unread",
-          adminResponse: "",
-          createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-        },
-      ];
-    }
-    return localMsgs;
+    const combined = [...serverMsgs];
+    localMsgs.forEach((loc) => {
+      if (!combined.some((s) => (s._id || s.id).toString() === (loc._id || loc.id).toString())) {
+        combined.push(loc);
+      }
+    });
+    return combined;
   },
 
   async updateContactStatus(id, updateData) {
@@ -834,42 +820,64 @@ export const dataService = {
 
   // User Management API for Admin
   async getUsers() {
+    let serverUsers = [];
     try {
       const { data } = await api.get("/auth/users");
-      if (Array.isArray(data)) return data;
+      if (Array.isArray(data)) serverUsers = data;
     } catch (err) {
-      console.warn("API getUsers error, returning local users:", err.message);
+      console.warn("API getUsers notice:", err.message);
     }
+
     const localUsers = JSON.parse(localStorage.getItem("local_users") || "[]");
-    if (localUsers.length === 0) {
-      return [
-        {
-          _id: "user_admin_1",
-          name: "Dean's Office Admin",
-          email: "admin@ruh.ac.lk",
-          role: "admin",
-          department: "Department of Information & Communication Technology",
-          createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        },
-        {
-          _id: "user_lec_1",
-          name: "Dr. Perera (Lecturer)",
-          email: "dr.perera@fot.ruh.ac.lk",
-          role: "provider",
-          department: "Department of Engineering Technology",
-          createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-        },
-        {
-          _id: "user_stu_1",
-          name: "Kasun Perera",
-          email: "kasun@fot.ruh.ac.lk",
-          role: "student",
-          department: "Department of Information & Communication Technology",
-          createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        },
-      ];
+    const currentUser = JSON.parse(localStorage.getItem("userInfo") || "null");
+
+    const defaultInitialUsers = [
+      {
+        _id: "user_admin_1",
+        name: "Dean's Office Admin",
+        email: "admin@ruh.ac.lk",
+        role: "admin",
+        createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        _id: "user_lec_1",
+        name: "Dr. Perera (Lecturer)",
+        email: "dr.perera@fot.ruh.ac.lk",
+        role: "provider",
+        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        _id: "user_stu_1",
+        name: "Kasun Perera",
+        email: "kasun@fot.ruh.ac.lk",
+        role: "student",
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    ];
+
+    const combined = [...serverUsers];
+
+    if (combined.length === 0) {
+      combined.push(...defaultInitialUsers);
     }
-    return localUsers;
+
+    localUsers.forEach((loc) => {
+      if (loc && loc.email && !combined.some((s) => s.email?.toLowerCase() === loc.email?.toLowerCase())) {
+        combined.unshift(loc);
+      }
+    });
+
+    if (currentUser && currentUser.email && !combined.some((s) => s.email?.toLowerCase() === currentUser.email?.toLowerCase())) {
+      combined.unshift({
+        _id: currentUser._id || "user_" + Date.now(),
+        name: currentUser.name,
+        email: currentUser.email,
+        role: currentUser.role || "student",
+        createdAt: new Date().toISOString(),
+      });
+    }
+
+    return combined;
   },
 
   async updateUserRole(id, role) {

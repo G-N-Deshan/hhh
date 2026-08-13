@@ -2,9 +2,9 @@ const jwt = require("jsonwebtoken");
 
 const JWT_DEFAULT_SECRET = "ruhuna_tech_faculty_opportunity_bridge_secret_key_2026";
 
-const generateToken = (id) => {
+const generateToken = (id, role = "student") => {
   return jwt.sign(
-    { id },
+    { id, role },
     process.env.JWT_SECRET || JWT_DEFAULT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRES_IN || "30d",
