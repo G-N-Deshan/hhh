@@ -10,9 +10,12 @@ import {
   FaBookmark,
   FaMapMarkerAlt,
   FaExclamationTriangle,
+  FaPaperPlane,
   FaSignOutAlt,
   FaSearch,
   FaArrowRight,
+  FaCheckCircle,
+  FaClock,
 } from "react-icons/fa";
 
 export default function UserProfilePage() {
@@ -25,13 +28,18 @@ export default function UserProfilePage() {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [wishlist, setWishlist] = useState([]);
   const [myReports, setMyReports] = useState([]);
+  const [myApplications, setMyApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [wishlistSearch, setWishlistSearch] = useState("");
 
   const fetchUserData = async () => {
     setLoading(true);
     try {
-      const allOpps = await dataService.getOpportunities();
+      const [allOpps, allBarriers, userApps] = await Promise.all([
+        dataService.getOpportunities(),
+        dataService.getBarriers(),
+        dataService.getMyApplications(),
+      ]);
       
       const userSavedList = Array.isArray(user?.savedOpportunities) ? user.savedOpportunities : [];
       const userSavedIds = userSavedList.map((s) => (typeof s === "object" ? s._id || s.id : s).toString());
@@ -49,7 +57,6 @@ export default function UserProfilePage() {
         }
       });
 
-      // If user has 0 saved items, auto-populate initial 3 sample opportunities so Wishlist is populated
       if (savedList.length === 0 && allOpps.length > 0) {
         savedList = allOpps.slice(0, 3);
         const defaultSavedIds = savedList.map((o) => (o._id || o.id).toString());
@@ -58,13 +65,13 @@ export default function UserProfilePage() {
 
       setWishlist(savedList);
 
-      const allBarriers = await dataService.getBarriers();
       const userReports = allBarriers.filter(
         (b) => b.reportedBy?._id === user?._id || b.reportedBy === user?._id
       );
       setMyReports(userReports);
+      setMyApplications(userApps || []);
     } catch (err) {
-      console.error("Failed to load wishlist:", err);
+      console.error("Failed to load user profile data:", err);
     } finally {
       setLoading(false);
     }
@@ -85,7 +92,7 @@ export default function UserProfilePage() {
     toast.success("Removed from wishlist");
   };
 
-  if (loading) return <Loader text="Loading your wishlist..." />;
+  if (loading) return <Loader text="Loading your dashboard..." />;
 
   const filteredWishlist = wishlist.filter((item) => {
     if (!wishlistSearch) return true;
@@ -96,6 +103,20 @@ export default function UserProfilePage() {
       item.department.toLowerCase().includes(query)
     );
   });
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "Accepted":
+      case "Shortlisted":
+        return "bg-emerald-100 text-emerald-800 border-emerald-300";
+      case "Under Review":
+        return "bg-amber-100 text-amber-800 border-amber-300";
+      case "Rejected":
+        return "bg-rose-100 text-rose-800 border-rose-300";
+      default:
+        return "bg-blue-100 text-blue-800 border-blue-300";
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
@@ -126,7 +147,11 @@ export default function UserProfilePage() {
               </span>
               <span className="flex items-center space-x-1 font-bold text-rose-600">
                 <FaHeart className="text-rose-500" />
-                <span>{wishlist.length} Saved Opportunities</span>
+                <span>{wishlist.length} Wishlist</span>
+              </span>
+              <span className="flex items-center space-x-1 font-bold text-blue-600">
+                <FaPaperPlane className="text-blue-500" />
+                <span>{myApplications.length} Applications</span>
               </span>
             </div>
           </div>
@@ -171,6 +196,24 @@ export default function UserProfilePage() {
 
             <button
               type="button"
+              onClick={() => setActiveTab("applications")}
+              className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                activeTab === "applications"
+                  ? "bg-blue-600 text-white font-outfit shadow-sm"
+                  : "text-slate-700 hover:bg-slate-100"
+              }`}
+            >
+              <div className="flex items-center space-x-2.5">
+                <FaPaperPlane />
+                <span>My Applications</span>
+              </div>
+              <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-mono font-bold">
+                {myApplications.length}
+              </span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setActiveTab("reports")}
               className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center space-x-2.5 cursor-pointer ${
                 activeTab === "reports"
@@ -201,7 +244,6 @@ export default function UserProfilePage() {
                   <p className="text-xs text-slate-500">Saved opportunities specific to your registered account.</p>
                 </div>
 
-                {/* Search in Wishlist */}
                 {wishlist.length > 0 && (
                   <div className="relative w-full sm:w-64">
                     <FaSearch className="absolute left-3 top-3 text-slate-400 text-xs" />
@@ -248,7 +290,82 @@ export default function UserProfilePage() {
             </div>
           )}
 
-          {/* TAB 2: MY BARRIER REPORTS */}
+          {/* TAB 2: MY SUBMITTED APPLICATIONS */}
+          {activeTab === "applications" && (
+            <div className="space-y-6">
+              <div className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white space-y-1">
+                <h2 className="text-xl font-bold text-slate-900 font-outfit flex items-center space-x-2">
+                  <FaPaperPlane className="text-blue-600 text-lg" />
+                  <span>My Submitted Applications</span>
+                </h2>
+                <p className="text-xs text-slate-500">Track application status and faculty admin responses for jobs & internships.</p>
+              </div>
+
+              {myApplications.length === 0 ? (
+                <div className="glass-panel p-12 rounded-3xl border border-slate-200 bg-white text-center space-y-4 shadow-sm">
+                  <FaPaperPlane className="text-slate-400 text-3xl mx-auto" />
+                  <h3 className="text-lg font-bold text-slate-800 font-outfit">No Applications Submitted Yet</h3>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto">
+                    When you apply for scholarships, internships, or jobs, your applications will appear here with live status updates!
+                  </p>
+                  <Link
+                    to="/opportunities"
+                    className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs font-outfit shadow-md"
+                  >
+                    <span>Browse & Apply Now</span>
+                    <FaArrowRight />
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {myApplications.map((app) => (
+                    <div key={app._id} className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white space-y-3 shadow-sm">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div>
+                          <h3 className="font-bold text-slate-900 text-base font-outfit">
+                            {app.opportunityTitle || app.opportunity?.title || "Faculty Opportunity"}
+                          </h3>
+                          <p className="text-[11px] text-slate-500 font-mono">
+                            Applied on: {new Date(app.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusBadge(app.status)} self-start sm:self-auto`}>
+                          {app.status}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600">
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase font-mono">Applicant Name</span>
+                          <span className="font-bold text-slate-900">{app.applicantName}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase font-mono">Student / Reg ID</span>
+                          <span className="font-bold text-slate-900 font-mono">{app.studentId || "N/A"}</span>
+                        </div>
+                      </div>
+
+                      {app.coverNote && (
+                        <div className="p-3 bg-slate-50 rounded-xl text-xs text-slate-700 border border-slate-200">
+                          <span className="font-bold text-slate-900 block text-[10px] uppercase font-mono mb-1">Cover Note / Statement</span>
+                          <p className="italic">"{app.coverNote}"</p>
+                        </div>
+                      )}
+
+                      {app.adminNotes && (
+                        <div className="p-3.5 bg-blue-50/60 rounded-xl text-xs text-blue-900 border border-blue-200">
+                          <span className="font-bold text-blue-950 block text-[10px] uppercase font-mono mb-1">Faculty Admin Notes</span>
+                          <p>{app.adminNotes}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: MY BARRIER REPORTS */}
           {activeTab === "reports" && (
             <div className="space-y-6">
               <div className="glass-panel p-6 rounded-2xl border border-slate-200 bg-white space-y-1">
