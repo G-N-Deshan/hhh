@@ -6,11 +6,11 @@ const {
   createBarrierReport,
   updateBarrierStatus,
   deleteBarrierReport,
-  getBarrierAnalytics,
+  getAnalyticsOverview,
 } = require("../controllers/barrierController");
 const { protect, providerOrAdmin } = require("../middleware/authMiddleware");
 
-router.get("/analytics/overview", getBarrierAnalytics);
+router.get("/analytics/overview", getAnalyticsOverview);
 
 router
   .route("/")
