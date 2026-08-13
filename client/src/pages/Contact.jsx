@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { dataService } from "../services/dataService";
 import { FaMapMarkerAlt, FaEnvelope, FaPhone, FaPaperPlane } from "react-icons/fa";
 
 export default function Contact() {
@@ -9,17 +10,24 @@ export default function Contact() {
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
-      toast.success("Thank you! Your message has been sent to Administration.");
+    const res = await dataService.sendContactMessage({
+      name,
+      email,
+      subject: subject || "General Inquiry",
+      message,
+    });
+    setSubmitting(false);
+
+    if (res) {
+      toast.success("Thank you! Your message has been transmitted to Administration.");
       setName("");
       setEmail("");
       setSubject("");
       setMessage("");
-      setSubmitting(false);
-    }, 600);
+    }
   };
 
   return (
@@ -40,7 +48,7 @@ export default function Contact() {
             <FaMapMarkerAlt className="text-amber-600 text-xl" />
             <h3 className="text-sm font-bold text-slate-900 font-outfit">Our Location</h3>
             <p className="text-xs text-slate-600">
-              123 Community Hub Street, Colombo, Sri Lanka
+              Faculty of Technology, University of Ruhuna, Karagoda-Uyangoda, Kamburupitiya, Sri Lanka
             </p>
           </div>
 
@@ -48,7 +56,7 @@ export default function Contact() {
             <FaEnvelope className="text-rose-600 text-xl" />
             <h3 className="text-sm font-bold text-slate-900 font-outfit">Email Support</h3>
             <p className="text-xs text-slate-600">
-              info@opportunitybridge.org / support@opportunitybridge.org
+              info@fot.ruh.ac.lk / dean@fot.ruh.ac.lk
             </p>
           </div>
 
@@ -56,13 +64,13 @@ export default function Contact() {
             <FaPhone className="text-emerald-600 text-xl" />
             <h3 className="text-sm font-bold text-slate-900 font-outfit">General Phone</h3>
             <p className="text-xs text-slate-600">
-              +94 (0)11 2345678 / +94 (0)11 2345679
+              +94 (0)41 2292200 / +94 (0)41 2292201
             </p>
           </div>
         </div>
 
         {/* Right Side: Contact Form */}
-        <div className="md:col-span-2 glass-panel p-8 rounded-3xl border border-slate-200 bg-white space-y-4">
+        <div className="md:col-span-2 glass-panel p-8 rounded-3xl border border-slate-200 bg-white space-y-4 shadow-sm">
           <h3 className="text-xl font-bold text-slate-900 font-outfit">Send Us a Message</h3>
           
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -72,7 +80,7 @@ export default function Contact() {
                 <input
                   type="text"
                   required
-                  placeholder="John Doe"
+                  placeholder="Kasun Perera"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-white text-slate-900 px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:outline-none text-sm"
@@ -84,7 +92,7 @@ export default function Contact() {
                 <input
                   type="email"
                   required
-                  placeholder="user@example.com"
+                  placeholder="student@fot.ruh.ac.lk"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-white text-slate-900 px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:outline-none text-sm"
@@ -106,27 +114,28 @@ export default function Contact() {
             <div>
               <label className="block text-xs font-bold uppercase text-slate-700 mb-1">Message *</label>
               <textarea
-                rows={4}
+                rows="4"
                 required
-                placeholder="Write your message here..."
+                placeholder="Write your message or inquiry here..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full bg-white text-slate-900 px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:outline-none text-sm"
+                className="w-full bg-white text-slate-900 p-4 rounded-xl border border-slate-300 focus:border-blue-500 focus:outline-none text-sm"
               ></textarea>
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-all font-outfit flex items-center space-x-2"
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl font-outfit shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer"
             >
               <FaPaperPlane />
-              <span>{submitting ? "Sending..." : "Send Message"}</span>
+              <span>{submitting ? "Sending Message..." : "Send Message to Admin"}</span>
             </button>
           </form>
         </div>
 
       </div>
+
     </div>
   );
 }

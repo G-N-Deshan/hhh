@@ -12,6 +12,7 @@ import {
   FaTimes,
   FaUser,
   FaHeart,
+  FaShieldAlt,
 } from "react-icons/fa";
 
 export default function Navbar() {
@@ -26,7 +27,71 @@ export default function Navbar() {
   };
 
   const isActive = (path) => location.pathname === path;
+  const isAdminPage = location.pathname.startsWith("/admin");
 
+  // DEDICATED EXECUTIVE ADMIN NAVBAR HEADER
+  if (isAdminPage) {
+    return (
+      <header className="sticky top-0 z-50 bg-slate-900 text-white border-b border-slate-800 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            
+            {/* Admin Portal Branding */}
+            <Link to="/admin/dashboard" className="flex items-center space-x-3 group">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-rose-600 via-amber-500 to-rose-700 p-0.5 shadow-md shrink-0">
+                <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                  <FaShieldAlt className="w-6 h-6 text-amber-400" />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="font-black text-xl tracking-tight text-white font-outfit">
+                    Opportunity<span className="text-amber-400">Bridge</span>
+                  </span>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded bg-rose-600 text-white uppercase tracking-widest">
+                    ADMIN PORTAL
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400 font-mono hidden sm:block">
+                  Dean's Office Executive Control Suite
+                </p>
+              </div>
+            </Link>
+
+            {/* Dedicated Admin Actions */}
+            <div className="flex items-center space-x-3">
+              <Link
+                to="/"
+                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all border border-slate-700 font-outfit hidden sm:flex items-center space-x-1"
+              >
+                <span>Public Site ←</span>
+              </Link>
+
+              <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-bold text-slate-200">
+                <FaUser className="text-amber-400 text-xs" />
+                <span>{user?.name || "Admin"}</span>
+                <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-extrabold uppercase">
+                  ADMIN
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="p-2.5 rounded-xl bg-slate-800 hover:bg-rose-900 text-slate-300 hover:text-white transition-colors cursor-pointer border border-slate-700"
+                title="Sign Out"
+              >
+                <FaSignOutAlt className="text-sm" />
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  // STANDARD PUBLIC NAVBAR HEADER
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,7 +119,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Center Navigation Links (Home, Opportunities, Report Barrier, Contact) */}
+          {/* Desktop Center Navigation Links */}
           <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
             <Link
               to="/"
