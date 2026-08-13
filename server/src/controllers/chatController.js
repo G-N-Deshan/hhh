@@ -1,4 +1,3 @@
-const axios = require("axios");
 const defaultKeyParts = ["gsk", "2EBC5k1eitiW8JrQAoMvWGdyb3FYR80qMSyhl5wEjLznkUzd6SNY"];
 const GROQ_API_KEY = process.env.GROQ_API_KEY || defaultKeyParts.join("_");
 const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
@@ -40,15 +39,17 @@ const processChat = async (req, res) => {
       max_tokens: 1024,
     };
 
-    const response = await axios.post(GROQ_ENDPOINT, groqPayload, {
+    const response = await fetch(GROQ_ENDPOINT, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${GROQ_API_KEY}`,
       },
-      timeout: 20000,
+      body: JSON.stringify(groqPayload),
     });
 
-    const aiChoice = response.data?.choices?.[0]?.message;
+    const data = await response.json();
+    const aiChoice = data?.choices?.[0]?.message;
 
     if (aiChoice) {
       return res.json({
@@ -59,10 +60,10 @@ const processChat = async (req, res) => {
 
     res.status(500).json({ message: "No response choice returned by AI model" });
   } catch (error) {
-    console.error("Groq API Chat Error:", error.response?.data || error.message);
+    console.error("Groq API Chat Error:", error.message);
     res.status(500).json({
       message: "AI service error",
-      error: error.response?.data?.error?.message || error.message,
+      error: error.message,
     });
   }
 };
