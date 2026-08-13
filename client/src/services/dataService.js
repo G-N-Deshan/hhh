@@ -370,6 +370,180 @@ export const dataService = {
     return { savedOpportunities: savedList };
   },
 
+  // Application Management API
+  async applyOpportunity(id, applicationData) {
+    try {
+      const { data } = await api.post(`/applications/opportunity/${id}/apply`, applicationData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API apply opportunity error, saving locally:", err.message);
+    }
+    const localApps = JSON.parse(localStorage.getItem("local_applications") || "[]");
+    const newApp = {
+      _id: "app_local_" + Date.now(),
+      opportunity: id,
+      opportunityTitle: applicationData.opportunityTitle || "Faculty Opportunity",
+      applicantName: applicationData.applicantName || "Applicant",
+      applicantEmail: applicationData.applicantEmail || "applicant@fot.ruh.ac.lk",
+      studentId: applicationData.studentId || "",
+      coverNote: applicationData.coverNote || "",
+      createdAt: new Date().toISOString(),
+      status: "Submitted",
+      adminNotes: "",
+    };
+    localApps.unshift(newApp);
+    localStorage.setItem("local_applications", JSON.stringify(localApps));
+    return newApp;
+  },
+
+  async getMyApplications() {
+    try {
+      const { data } = await api.get("/applications/my");
+      if (Array.isArray(data)) return data;
+    } catch (err) {
+      console.warn("API getMyApplications error, returning local applications:", err.message);
+    }
+    const localApps = JSON.parse(localStorage.getItem("local_applications") || "[]");
+    if (localApps.length === 0) {
+      return [
+        {
+          _id: "app_demo_1",
+          opportunityTitle: "Full-Stack Software Engineering Intern - Virtusa",
+          applicantName: "Nipuna Deshan",
+          applicantEmail: "tech.student@fot.ruh.ac.lk",
+          studentId: "TG/2022/1004",
+          coverNote: "I am a 3rd year ICT undergraduate passionate about MERN stack web development.",
+          status: "Under Review",
+          adminNotes: "Resume forwarded to Virtusa HR Coordinator.",
+          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+      ];
+    }
+    return localApps;
+  },
+
+  async getAllApplications() {
+    try {
+      const { data } = await api.get("/applications");
+      if (Array.isArray(data)) return data;
+    } catch (err) {
+      console.warn("API getAllApplications error, returning local applications:", err.message);
+    }
+    const localApps = JSON.parse(localStorage.getItem("local_applications") || "[]");
+    if (localApps.length === 0) {
+      return [
+        {
+          _id: "app_demo_1",
+          opportunityTitle: "Full-Stack Software Engineering Intern - Virtusa",
+          applicantName: "Nipuna Deshan",
+          applicantEmail: "tech.student@fot.ruh.ac.lk",
+          studentId: "TG/2022/1004",
+          coverNote: "I am a 3rd year ICT undergraduate passionate about MERN stack web development.",
+          status: "Under Review",
+          adminNotes: "Resume forwarded to Virtusa HR Coordinator.",
+          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+      ];
+    }
+    return localApps;
+  },
+
+  async updateApplicationStatus(id, updateData) {
+    try {
+      const { data } = await api.put(`/applications/${id}`, updateData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API updateApplicationStatus error, saving locally:", err.message);
+    }
+    const localApps = JSON.parse(localStorage.getItem("local_applications") || "[]");
+    const updated = localApps.map((a) => (a._id === id ? { ...a, ...updateData } : a));
+    localStorage.setItem("local_applications", JSON.stringify(updated));
+    return updated.find((a) => a._id === id);
+  },
+
+  async deleteApplication(id) {
+    try {
+      await api.delete(`/applications/${id}`);
+    } catch (err) {
+      console.warn("API deleteApplication error:", err.message);
+    }
+    const localApps = JSON.parse(localStorage.getItem("local_applications") || "[]");
+    const updated = localApps.filter((a) => a._id !== id);
+    localStorage.setItem("local_applications", JSON.stringify(updated));
+    return true;
+  },
+
+  // Contact Support Messages API
+  async sendContactMessage(msgData) {
+    try {
+      const { data } = await api.post("/contact", msgData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API sendContactMessage error, saving locally:", err.message);
+    }
+    const localMsgs = JSON.parse(localStorage.getItem("local_contact_messages") || "[]");
+    const newMsg = {
+      _id: "cmsg_local_" + Date.now(),
+      ...msgData,
+      status: "Unread",
+      adminResponse: "",
+      createdAt: new Date().toISOString(),
+    };
+    localMsgs.unshift(newMsg);
+    localStorage.setItem("local_contact_messages", JSON.stringify(localMsgs));
+    return newMsg;
+  },
+
+  async getContactMessages() {
+    try {
+      const { data } = await api.get("/contact");
+      if (Array.isArray(data)) return data;
+    } catch (err) {
+      console.warn("API getContactMessages error, returning local messages:", err.message);
+    }
+    const localMsgs = JSON.parse(localStorage.getItem("local_contact_messages") || "[]");
+    if (localMsgs.length === 0) {
+      return [
+        {
+          _id: "cmsg_demo_1",
+          name: "Sahan Wickramasinghe",
+          email: "sahan.w@fot.ruh.ac.lk",
+          subject: "Inquiry regarding scholarship deadline extensions",
+          message: "Could you please clarify if the Mahapola bursary supplementary document deadline will be extended?",
+          status: "Unread",
+          adminResponse: "",
+          createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+      ];
+    }
+    return localMsgs;
+  },
+
+  async updateContactStatus(id, updateData) {
+    try {
+      const { data } = await api.put(`/contact/${id}`, updateData);
+      if (data) return data;
+    } catch (err) {
+      console.warn("API updateContactStatus error, saving locally:", err.message);
+    }
+    const localMsgs = JSON.parse(localStorage.getItem("local_contact_messages") || "[]");
+    const updated = localMsgs.map((m) => (m._id === id ? { ...m, ...updateData } : m));
+    localStorage.setItem("local_contact_messages", JSON.stringify(updated));
+    return updated.find((m) => m._id === id);
+  },
+
+  async deleteContactMessage(id) {
+    try {
+      await api.delete(`/contact/${id}`);
+    } catch (err) {
+      console.warn("API deleteContactMessage error:", err.message);
+    }
+    const localMsgs = JSON.parse(localStorage.getItem("local_contact_messages") || "[]");
+    const updated = localMsgs.filter((m) => m._id !== id);
+    localStorage.setItem("local_contact_messages", JSON.stringify(updated));
+    return true;
+  },
+
   // Barrier Reports API
   async getBarriers(params = {}) {
     try {
@@ -656,6 +830,83 @@ export const dataService = {
     local.unshift(newRev);
     localStorage.setItem("local_site_reviews", JSON.stringify(local));
     return newRev;
+  },
+
+  // User Management API for Admin
+  async getUsers() {
+    try {
+      const { data } = await api.get("/auth/users");
+      if (Array.isArray(data)) return data;
+    } catch (err) {
+      console.warn("API getUsers error, returning local users:", err.message);
+    }
+    const localUsers = JSON.parse(localStorage.getItem("local_users") || "[]");
+    if (localUsers.length === 0) {
+      return [
+        {
+          _id: "user_admin_1",
+          name: "Dean's Office Admin",
+          email: "admin@ruh.ac.lk",
+          role: "admin",
+          department: "Department of Information & Communication Technology",
+          createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          _id: "user_lec_1",
+          name: "Dr. Perera (Lecturer)",
+          email: "dr.perera@fot.ruh.ac.lk",
+          role: "provider",
+          department: "Department of Engineering Technology",
+          createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          _id: "user_stu_1",
+          name: "Kasun Perera",
+          email: "kasun@fot.ruh.ac.lk",
+          role: "student",
+          department: "Department of Information & Communication Technology",
+          createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+      ];
+    }
+    return localUsers;
+  },
+
+  async updateUserRole(id, role) {
+    try {
+      const { data } = await api.put(`/auth/users/${id}/role`, { role });
+      if (data) return data;
+    } catch (err) {
+      console.warn("API updateUserRole error, saving locally:", err.message);
+    }
+    const localUsers = JSON.parse(localStorage.getItem("local_users") || "[]");
+    const updated = localUsers.map((u) => (u._id === id ? { ...u, role } : u));
+    localStorage.setItem("local_users", JSON.stringify(updated));
+    return updated.find((u) => u._id === id);
+  },
+
+  async deleteUser(id) {
+    try {
+      await api.delete(`/auth/users/${id}`);
+    } catch (err) {
+      console.warn("API deleteUser error:", err.message);
+    }
+    const localUsers = JSON.parse(localStorage.getItem("local_users") || "[]");
+    const updated = localUsers.filter((u) => u._id !== id);
+    localStorage.setItem("local_users", JSON.stringify(updated));
+    return true;
+  },
+
+  async deleteSiteReview(id) {
+    try {
+      await api.delete(`/site-reviews/${id}`);
+    } catch (err) {
+      console.warn("API deleteSiteReview error:", err.message);
+    }
+    const local = JSON.parse(localStorage.getItem("local_site_reviews") || "[]");
+    const updated = local.filter((r) => r._id !== id);
+    localStorage.setItem("local_site_reviews", JSON.stringify(updated));
+    return true;
   },
 };
 

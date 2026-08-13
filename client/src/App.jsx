@@ -30,6 +30,8 @@ import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import ManageOpportunities from "./pages/admin/ManageOpportunities";
 import ManageBarrierReports from "./pages/admin/ManageBarrierReports";
 import ManageUsers from "./pages/admin/ManageUsers";
+import AdminApplicationsPage from "./pages/admin/AdminApplicationsPage";
+import AdminMessagesPage from "./pages/admin/AdminMessagesPage";
 
 function AdminRouteGuard({ children }) {
   const { user, isAdmin } = useAuth();
@@ -85,6 +87,8 @@ export default function App() {
               <Route path="/admin" element={<AdminRouteGuard><AdminDashboardPage /></AdminRouteGuard>} />
               <Route path="/admin/dashboard" element={<AdminRouteGuard><AdminDashboardPage /></AdminRouteGuard>} />
               <Route path="/admin/opportunities" element={<AdminRouteGuard><ManageOpportunities /></AdminRouteGuard>} />
+              <Route path="/admin/applications" element={<AdminRouteGuard><AdminApplicationsPage /></AdminRouteGuard>} />
+              <Route path="/admin/messages" element={<AdminRouteGuard><AdminMessagesPage /></AdminRouteGuard>} />
               <Route path="/admin/barriers" element={<AdminRouteGuard><ManageBarrierReports /></AdminRouteGuard>} />
               <Route path="/admin/users" element={<AdminRouteGuard><ManageUsers /></AdminRouteGuard>} />
 
