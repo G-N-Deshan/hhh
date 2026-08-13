@@ -10,7 +10,8 @@ import {
   FaArrowRight, 
   FaShieldAlt,
   FaLightbulb,
-  FaCheckCircle
+  FaCheckCircle,
+  FaUserPlus
 } from "react-icons/fa";
 
 export default function Login() {
@@ -136,7 +137,7 @@ export default function Login() {
             </div>
             <div className="flex items-start space-x-3 text-xs text-slate-200 bg-white/5 p-3 rounded-xl border border-white/10 backdrop-blur-sm">
               <FaLightbulb className="text-amber-400 mt-0.5 text-sm shrink-0" />
-              <span>Direct application channels with faculty support</span>
+              <span>Direct application channels with support</span>
             </div>
           </div>
 
@@ -188,7 +189,7 @@ export default function Login() {
             {/* Email Field */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Faculty Email
+                Email Address
               </label>
               <div className="relative group">
                 <FaEnvelope className="absolute left-3.5 top-3.5 text-slate-400 group-focus-within:text-blue-600 transition-colors text-sm" />
@@ -241,14 +242,29 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Footer Register Callout */}
-          <div className="text-center pt-2 border-t border-slate-200/60 text-xs text-slate-500">
-            Don't have a faculty account?{" "}
+          {/* Enhanced Register Callout */}
+          <div className="pt-2">
             <Link 
               to="/register" 
-              className="text-blue-600 font-bold hover:text-blue-700 hover:underline transition-colors inline-flex items-center gap-1"
+              className="group p-3 bg-white border border-slate-200 hover:border-blue-300 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between px-4 text-left"
             >
-              Register here <FaArrowRight className="text-[10px]" />
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all flex items-center justify-center shrink-0">
+                  <FaUserPlus className="text-sm" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+                    New to OpportunityBridge?
+                  </div>
+                  <div className="text-[11px] text-slate-500">
+                    Create Account
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center text-xs font-bold text-blue-600 group-hover:translate-x-1 transition-transform">
+                <span>Register</span>
+                <FaArrowRight className="ml-1.5 text-[10px]" />
+              </div>
             </Link>
           </div>
 
