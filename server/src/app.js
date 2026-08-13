@@ -63,6 +63,7 @@ app.use("/api/qa", require("./routes/qaRoutes"));
 app.use("/api/site-reviews", require("./routes/siteReviewRoutes"));
 app.use("/api/applications", require("./routes/applicationRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
+app.use("/api/chat", require("./routes/chatRoutes"));
 
 // Multi-Candidate Path Resolution for Frontend Production Build (client/dist)
 const candidateDistPaths = [

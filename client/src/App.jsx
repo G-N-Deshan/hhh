@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FloatingQAWidget from "./components/FloatingQAWidget";
+import ChatbotWidget from "./components/ChatbotWidget";
 
 // Public Pages
 import Home from "./pages/Home";
@@ -97,8 +98,9 @@ export default function App() {
             </Routes>
           </main>
 
-          {/* Floating Right-Side Corner Q&A Board Widget */}
+          {/* Floating Right-Side Corner Q&A Board & AI Chatbot Widgets */}
           <FloatingQAWidget />
+          <ChatbotWidget />
 
           <Footer />
         </div>

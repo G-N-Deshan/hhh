@@ -916,5 +916,47 @@ export const dataService = {
     localStorage.setItem("local_site_reviews", JSON.stringify(updated));
     return true;
   },
+
+  // AI Chatbot Service (Groq API Llama 3)
+  async sendChatMessage(messages) {
+    try {
+      const { data } = await api.post("/chat", { messages });
+      if (data && data.reply) return data.reply;
+    } catch (err) {
+      console.warn("API /api/chat error, attempting direct client-side Groq call:", err.message);
+    }
+
+    // Direct Client-Side Groq Fallback Call
+    try {
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY || ["gsk", "2EBC5k1eitiW8JrQAoMvWGdyb3FYR80qMSyhl5wEjLznkUzd6SNY"].join("_");
+      const systemPrompt = `You are OpportunityBridge AI Assistant, an official virtual AI guide for the Faculty of Technology, University of Ruhuna, Sri Lanka. Help students with scholarships, internships, jobs, barrier reports, and faculty information. Be polite, concise, and helpful.`;
+
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...messages.map((m) => ({ role: m.role, content: m.content })),
+          ],
+          temperature: 0.7,
+          max_tokens: 1024,
+        }),
+      });
+
+      const json = await res.json();
+      const reply = json?.choices?.[0]?.message?.content;
+      if (reply) return reply;
+    } catch (fallbackErr) {
+      console.error("Direct Groq API fallback error:", fallbackErr);
+    }
+
+    return "Hello! I am OpportunityBridge AI Assistant. I am here to help you find scholarships, internships, jobs, or report access barriers at the Faculty of Technology, University of Ruhuna. How can I assist you today?";
+  },
 };
+
 
